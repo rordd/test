@@ -6,8 +6,7 @@
 <title>webOS Micro</title>
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-<style>
-      /* webOS Micro v3 */
+<style> /* webOS Micro 4.0 */
   html, body {
     height: 100%;
     margin: 0;
@@ -112,24 +111,31 @@
   /* Mobile styles */
   @media (max-width: 768px) {
     main {
-      flex-direction: column !important;
+      display: block !important;
       overflow-y: auto !important;
       height: auto !important;
     }
     main > section {
+      display: block !important;
+      position: static !important;
       width: 100% !important;
       height: auto !important;
       min-height: 300px;
       border-right: none !important;
       border-bottom: 1px solid #ddd;
       overflow: visible !important;
+      margin-bottom: 1rem;
     }
     main > section:last-child {
       border-bottom: none;
+      min-height: 300px !important;
     }
     .overflow-y-auto {
       overflow-y: visible !important;
       max-height: none !important;
+    }
+    #graph {
+      height: 500px !important;  /* Ensure graph area is visible */
     }
   }
   @media (max-width: 768px) {
@@ -165,10 +171,8 @@
     <div class="p-2 border-b">
       <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device</label>
       <select id="presetSelect" class="w-full apple-input mb-3">
-        <option value="">-- Select Device --</option>
-        <option value="smart-tv">Smart TV</option>
-        <option value="smart-speaker">Smart Speaker</option>
-      </select>
+  <option value="">-- Select Device --</option>
+</select>
       <div class="text-base font-semibold mb-1">Select Features</div>
       <div class="flex justify-end space-x-2">
         <button id="toggleExpand" class="text-gray-700 text-sm">▼</button>
@@ -204,6 +208,7 @@
   <button id="exportBtn" class="ml-auto px-2 py-1 text-xs border rounded bg-white hover:bg-gray-100">Export</button>
 </footer>
 <script>
+
 const categories = [
   {
     id: 'core',
@@ -484,6 +489,15 @@ const devicePresets = [
   }
 ];
 
+const presetSelect = document.getElementById('presetSelect');
+devicePresets.forEach(p => {
+  const opt = document.createElement('option');
+  opt.value = p.id;
+  opt.textContent = p.name;
+  presetSelect.appendChild(opt);
+});
+
+
 let selectedFeatures = new Set();
 let allExpanded = false;
 let allSelected = false;
@@ -597,7 +611,7 @@ function drawGraph(pkgs){
         nodes.push({id:dep,label:dep});
         added.add(dep);
       }
-      edges.push({from:pkg,to:dep});
+      edges.push({ from: pkg, to: dep, arrows: 'to' });
     });
   });
   const container=document.getElementById('graph');
@@ -623,7 +637,7 @@ function renderFeatureList(){
       <span>${cat.icon}</span>
       <span class="font-medium">${cat.name}</span>
     </div>
-    <input type="checkbox" data-cat="${cat.id}" class="w-5 h-5" />`;
+    <input type="checkbox" data-cat="${cat.id}" class="w-5 h-5"/>`;
 
     const body=document.createElement('div');
     body.className='ml-6 mt-2 space-y-1';
@@ -636,7 +650,7 @@ function renderFeatureList(){
       row.innerHTML=`<div class="flex items-center space-x-2">
         <span>${f.icon}</span><span>${f.name}</span>
       </div>
-      <input type="checkbox" data-feature="${f.id}" class="w-5 h-5"/>`;
+      <input type="checkbox" data-feature="${f.id}" class="w-5 h-5" />`;
       body.appendChild(row);
     });
 
