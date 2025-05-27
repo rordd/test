@@ -6,7 +6,7 @@
 <title>webOS Micro</title>
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-<style> /* webOS Micro 4.0 */
+<style> /* webOS Micro 5.0 */
   html, body {
     height: 100%;
     margin: 0;
@@ -208,7 +208,6 @@
   <button id="exportBtn" class="ml-auto px-2 py-1 text-xs border rounded bg-white hover:bg-gray-100">Export</button>
 </footer>
 <script>
-
 const categories = [
   {
     id: 'core',
@@ -216,83 +215,105 @@ const categories = [
     icon: '🧩',
     features: [
       { id: 'kernel', name: 'Kernel & OS', icon: '🖥️', requiredPackages: ['pkg-kernel'] },
-      { id: 'process-management', name: 'Process Management', icon: '⚙️', requiredPackages: ['pkg-process'] },
+      { id: 'process-scheduler', name: 'Process Scheduler', icon: '⚙️', requiredPackages: ['pkg-process'] },
       { id: 'memory-management', name: 'Memory Management', icon: '🧠', requiredPackages: ['pkg-memory'] },
+      { id: 'power-management', name: 'Power Management', icon: '🔋', requiredPackages: ['pkg-power'] },
+      { id: 'device-driver-framework', name: 'Device Driver Framework', icon: '🔌', requiredPackages: ['pkg-drivers'] },
+      { id: 'interprocess-communication', name: 'IPC Mechanism', icon: '📡', requiredPackages: ['pkg-ipc'] },
+      { id: 'system-logging', name: 'System Logging', icon: '📝', requiredPackages: ['pkg-logging'] },
       { id: 'security-framework', name: 'Security Framework', icon: '🔐', requiredPackages: ['pkg-security'] },
-      { id: 'device-drivers', name: 'Device Drivers', icon: '🔌', requiredPackages: ['pkg-drivers'] },
-      { id: 'inter-process-communication', name: 'IPC & Messaging', icon: '📡', requiredPackages: ['pkg-ipc'] },
-      { id: 'logging', name: 'System Logging', icon: '📝', requiredPackages: ['pkg-logging'] },
-      { id: 'power-management-core', name: 'Power Management Core', icon: '🔋', requiredPackages: ['pkg-power'] },
-      { id: 'update-engine', name: 'System Update Engine', icon: '⬆️', requiredPackages: ['pkg-update'] }
+      { id: 'system-update', name: 'System Update Engine', icon: '⬆️', requiredPackages: ['pkg-update'] }
     ]
   },
   {
     id: 'media',
-    name: 'Media & Streaming',
-    icon: '📺',
+    name: 'Media & Playback',
+    icon: '🎬',
     features: [
-      { id: 'video-player', name: 'Video Player', icon: '🎞️', requiredPackages: ['pkg-video', 'pkg-codec', 'pkg-decoder', 'pkg-hdr', 'pkg-4k-video'] },
-      { id: 'audio-player', name: 'Audio Player', icon: '🎵', requiredPackages: ['pkg-audio', 'pkg-decoder', 'pkg-audio-effects'] },
+      { id: 'video-playback', name: 'Video Playback', icon: '🎞️', requiredPackages: ['pkg-video'] },
+      { id: 'audio-playback', name: 'Audio Playback', icon: '🎵', requiredPackages: ['pkg-audio'] },
       { id: 'subtitle-support', name: 'Subtitle Support', icon: '💬', requiredPackages: ['pkg-subtitle'] },
-      { id: 'drm', name: 'Digital Rights Management', icon: '🔒', requiredPackages: ['pkg-drm', 'pkg-secure'] },
-      { id: 'broadcasting', name: 'Broadcasting (DVB, ATSC)', icon: '📡', requiredPackages: ['pkg-broadcast', 'pkg-dvb'] },
-      { id: 'airplay', name: 'AirPlay Support', icon: '🍎', requiredPackages: ['pkg-airplay', 'pkg-secure'] },
-      { id: 'chromecast', name: 'Chromecast Support', icon: '🎯', requiredPackages: ['pkg-chromecast'] },
-      { id: 'youtube-app', name: 'YouTube App', icon: '▶️', requiredPackages: ['pkg-youtube', 'pkg-video', 'pkg-network', 'pkg-drm'] },
-      { id: 'netflix-app', name: 'Netflix App', icon: '🎬', requiredPackages: ['pkg-netflix', 'pkg-video', 'pkg-drm', 'pkg-network', 'pkg-secure'] },
-      { id: 'web-browser', name: 'Web Browser', icon: '🌐', requiredPackages: ['pkg-browser', 'pkg-network', 'pkg-waf'] }
+      { id: 'drm-support', name: 'Digital Rights Management', icon: '🔒', requiredPackages: ['pkg-drm'] },
+      { id: 'media-codecs', name: 'Media Codecs', icon: '🎛️', requiredPackages: ['pkg-codec'] },
+      { id: 'camera', name: 'Camera', icon: '📷', requiredPackages: ['pkg-camera'] },
+      { id: 'picture-quality', name: 'Picture Quality', icon: '🖼️', requiredPackages: ['pkg-video-enhance'] },
+      { id: 'audio-quality', name: 'Audio Quality', icon: '🔊', requiredPackages: ['pkg-audio-enhance'] }
+    ]
+  },
+  {
+    id: 'broadcasting',
+    name: 'Broadcasting',
+    icon: '📡',
+    features: [
+      { id: 'dvb-t2', name: 'DVB-T2 Tuner', icon: '📻', requiredPackages: ['pkg-dvb-t2'] },
+      { id: 'atsc', name: 'ATSC Tuner', icon: '📻', requiredPackages: ['pkg-atsc'] },
+      { id: 'isdb-t', name: 'ISDB-T Tuner', icon: '📻', requiredPackages: ['pkg-isdb-t'] },
+      { id: 'media-broadcast-app', name: 'Broadcast App', icon: '📺', requiredPackages: ['pkg-broadcast-app'] },
+      { id: 'epg', name: 'Electronic Program Guide (EPG)', icon: '📅', requiredPackages: ['pkg-epg'] }
+    ]
+  },
+  {
+    id: 'apps',
+    name: 'Apps & Services',
+    icon: '📱',
+    features: [
+      { id: 'netflix', name: 'Netflix', icon: '🎬', requiredPackages: ['pkg-netflix'] },
+      { id: 'youtube', name: 'YouTube', icon: '▶️', requiredPackages: ['pkg-youtube'] },
+      { id: 'amazon-prime', name: 'Amazon Prime Video', icon: '🛒', requiredPackages: ['pkg-amazon-prime'] },
+      { id: 'hulu', name: 'Hulu', icon: '📺', requiredPackages: ['pkg-hulu'] },
+      { id: 'web-browser', name: 'Web Browser', icon: '🌐', requiredPackages: ['pkg-browser'] }
     ]
   },
   {
     id: 'connectivity',
-    name: 'Connectivity',
+    name: 'Connectivity & Network',
     icon: '🌐',
     features: [
-      { id: 'wifi', name: 'Wi-Fi', icon: '📶', requiredPackages: ['pkg-wifi', 'pkg-network', 'pkg-security', 'pkg-firewall', 'pkg-waf'] },
-      { id: 'bluetooth', name: 'Bluetooth', icon: '🔵', requiredPackages: ['pkg-bluetooth', 'pkg-security', 'pkg-bt-stack'] },
-      { id: 'nfc', name: 'NFC', icon: '📳', requiredPackages: ['pkg-nfc', 'pkg-security'] },
-      { id: 'ethernet', name: 'Ethernet', icon: '🔌', requiredPackages: ['pkg-ethernet', 'pkg-network'] },
-      { id: 'cellular', name: 'Cellular (Android)', icon: '📡', requiredPackages: ['pkg-cellular', 'pkg-network', 'pkg-sim'] },
-      { id: 'zigbee', name: 'Zigbee (Tizen IoT)', icon: '⚡', requiredPackages: ['pkg-zigbee', 'pkg-network'] },
-      { id: 'ble-mesh', name: 'BLE Mesh', icon: '📶', requiredPackages: ['pkg-ble-mesh', 'pkg-bluetooth'] },
-      { id: 'zwave', name: 'Z-Wave', icon: '⚙️', requiredPackages: ['pkg-zwave'] },
-      { id: 'vpn', name: 'VPN', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn', 'pkg-network', 'pkg-security'] }
+      { id: 'wifi', name: 'Wi-Fi Support', icon: '📶', requiredPackages: ['pkg-wifi'] },
+      { id: 'ethernet', name: 'Ethernet Support', icon: '🔌', requiredPackages: ['pkg-ethernet'] },
+      { id: 'bluetooth', name: 'Bluetooth Support', icon: '🔵', requiredPackages: ['pkg-bluetooth'] },
+      { id: 'nfc', name: 'NFC Support', icon: '📳', requiredPackages: ['pkg-nfc'] },
+      { id: 'vpn', name: 'VPN Client', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn'] },
+      { id: 'smart-home-protocols', name: 'Smart Home Protocols (Zigbee, BLE Mesh)', icon: '🏠', requiredPackages: ['pkg-zigbee', 'pkg-blemesh'] }
     ]
   },
   {
-    id: 'security',
-    name: 'Security',
-    icon: '🛡️',
+    id: 'display-audio',
+    name: 'Display & Audio',
+    icon: '🖥️🎵',
     features: [
-      { id: 'secure-boot', name: 'Secure Boot', icon: '🔐', requiredPackages: ['pkg-secureboot', 'pkg-kernel', 'pkg-security'] },
-      { id: 'firewall', name: 'Firewall', icon: '🔥', requiredPackages: ['pkg-firewall', 'pkg-network'] },
-      { id: 'vpn-sec', name: 'VPN', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn', 'pkg-network', 'pkg-security'] },
-      { id: 'antivirus', name: 'Antivirus', icon: '🦠', requiredPackages: ['pkg-antivirus', 'pkg-security'] },
-      { id: 'knox', name: 'Knox Security (Android)', icon: '🛡️', requiredPackages: ['pkg-knox', 'pkg-security', 'pkg-secureboot'] }
+      { id: 'panel-control', name: 'Panel Control', icon: '🖥️', requiredPackages: ['pkg-panel'] },
+      { id: 'hdmi-output', name: 'HDMI Output', icon: '📺', requiredPackages: ['pkg-hdmi'] },
+      { id: 'hdr-support', name: 'HDR Support', icon: '🌈', requiredPackages: ['pkg-hdr'] },
+      { id: 'picture-quality', name: 'Picture Quality', icon: '🖼️', requiredPackages: ['pkg-video-enhance'] },
+      { id: 'audio-quality', name: 'Audio Quality', icon: '🔊', requiredPackages: ['pkg-audio-enhance'] },
+      { id: 'equalizer', name: 'Equalizer', icon: '🎚️', requiredPackages: ['pkg-equalizer'] }
+    ]
+  },
+  {
+    id: 'system-apps',
+    name: 'System Apps',
+    icon: '🛠️',
+    features: [
+      { id: 'home-launcher', name: 'Home Launcher', icon: '🏠', requiredPackages: ['pkg-home-launcher'] },
+      { id: 'settings-app', name: 'Settings', icon: '⚙️', requiredPackages: ['pkg-settings'] },
+      { id: 'file-manager', name: 'File Manager', icon: '📁', requiredPackages: ['pkg-file-manager'] },
+      { id: 'package-manager', name: 'Package Manager', icon: '📦', requiredPackages: ['pkg-package-manager'] },
+      { id: 'notification-manager', name: 'Notification Manager', icon: '🔔', requiredPackages: ['pkg-notification'] },
+      { id: 'system-ui', name: 'System UI', icon: '🖥️', requiredPackages: ['pkg-system-ui'] },
+      { id: 'input-method', name: 'Input Method Editor (IME)', icon: '⌨️', requiredPackages: ['pkg-ime'] },
+      { id: 'power-manager', name: 'Power Manager', icon: '🔋', requiredPackages: ['pkg-power-manager'] }
     ]
   },
   {
     id: 'ai',
     name: 'AI & Voice',
-    icon: '🗣️',
+    icon: '🤖',
     features: [
-      { id: 'voice-recognition', name: 'Voice Recognition', icon: '🎙️', requiredPackages: ['pkg-voice', 'pkg-nlp', 'pkg-ai', 'pkg-audio'] },
-      { id: 'voice-assistant', name: 'Voice Assistant', icon: '🤖', requiredPackages: ['pkg-assistant', 'pkg-ai', 'pkg-voice'] },
-      { id: 'ai-framework', name: 'AI Framework', icon: '🧠', requiredPackages: ['pkg-ai', 'pkg-ml', 'pkg-gpu-accel'] }
-    ]
-  },
-  {
-    id: 'ui',
-    name: 'UI Frameworks',
-    icon: '🖥️',
-    features: [
-      { id: 'launcher', name: 'Launcher', icon: '🏠', requiredPackages: ['pkg-launcher'] },
-      { id: 'flutter', name: 'Flutter Support', icon: '🦋', requiredPackages: ['pkg-flutter', 'pkg-skia', 'pkg-dart-runtime'] },
-      { id: 'enact', name: 'Enact Framework', icon: '⚛️', requiredPackages: ['pkg-enact', 'pkg-react', 'pkg-nodejs'] },
-      { id: 'lvgl', name: 'LVGL UI Engine', icon: '🎨', requiredPackages: ['pkg-lvgl'] },
-      { id: 'theme-support', name: 'Theme Support', icon: '🎭', requiredPackages: ['pkg-theme'] },
-      { id: 'dark-mode', name: 'Dark Mode (Android)', icon: '🌙', requiredPackages: ['pkg-darkmode'] },
-      { id: 'accessibility', name: 'Accessibility (Android)', icon: '♿', requiredPackages: ['pkg-accessibility'] }
+      { id: 'voice-assistant', name: 'Voice Assistant', icon: '🗣️', requiredPackages: ['pkg-voice-assistant'] },
+      { id: 'voice-recognition', name: 'Voice Recognition', icon: '🎙️', requiredPackages: ['pkg-voice'] },
+      { id: 'nlp', name: 'Natural Language Processing', icon: '🧠', requiredPackages: ['pkg-nlp'] },
+      { id: 'ai-framework', name: 'AI Framework', icon: '🧬', requiredPackages: ['pkg-ai'] }
     ]
   },
   {
@@ -300,194 +321,395 @@ const categories = [
     name: 'Cloud & Services',
     icon: '☁️',
     features: [
-      { id: 'cloud-sync', name: 'Cloud Sync', icon: '🔄', requiredPackages: ['pkg-cloud', 'pkg-cloud-auth', 'pkg-cloud-storage', 'pkg-cloud-messaging'] },
-      { id: 'ota-update', name: 'Over-the-Air Update', icon: '⬆️', requiredPackages: ['pkg-ota', 'pkg-update', 'pkg-network', 'pkg-cloud'] },
-      { id: 'remote-management', name: 'Remote Device Management', icon: '📡', requiredPackages: ['pkg-remote', 'pkg-network', 'pkg-cloud'] }
+      { id: 'sdp', name: 'SDP (Service Delivery Platform)', icon: '🛠️', requiredPackages: ['pkg-sdp'] },
+      { id: 'thinq', name: 'ThinQ AI/IoT Platform', icon: '🤖', requiredPackages: ['pkg-thinq'] },
+      { id: 'nsu', name: 'NSU (Network Software Update)', icon: '⬆️', requiredPackages: ['pkg-nsu'] }
     ]
   },
   {
-    id: 'devtools',
+    id: 'security',
+    name: 'Security',
+    icon: '🛡️',
+    features: [
+      { id: 'secure-boot', name: 'Secure Boot', icon: '🔐', requiredPackages: ['pkg-secureboot'] },
+      { id: 'firewall', name: 'Firewall', icon: '🔥', requiredPackages: ['pkg-firewall'] },
+      { id: 'knox', name: 'Knox Security', icon: '🛡️', requiredPackages: ['pkg-knox'] },
+      { id: 'antivirus', name: 'Antivirus', icon: '🦠', requiredPackages: ['pkg-antivirus'] }
+    ]
+  },
+  {
+    id: 'developer-tools',
     name: 'Developer Tools',
     icon: '🛠️',
     features: [
       { id: 'debugger', name: 'Debugger', icon: '🐞', requiredPackages: ['pkg-debugger'] },
       { id: 'profiler', name: 'Profiler', icon: '📊', requiredPackages: ['pkg-profiler'] },
-      { id: 'log-viewer', name: 'Log Viewer', icon: '📜', requiredPackages: ['pkg-logging'] },
-      { id: 'performance-monitor', name: 'Performance Monitor', icon: '⏱️', requiredPackages: ['pkg-perfmon', 'pkg-logging'] },
-      { id: 'test-framework', name: 'Test Framework', icon: '✅', requiredPackages: ['pkg-test', 'pkg-ci-cd'] },
-      { id: 'remote-debug', name: 'Remote Debugging', icon: '🌐', requiredPackages: ['pkg-remote-debug', 'pkg-network', 'pkg-debugger'] },
-      { id: 'linter', name: 'Linter', icon: '📝', requiredPackages: ['pkg-linter'] },
-      { id: 'ci-cd', name: 'CI/CD', icon: '🚀', requiredPackages: ['pkg-ci-cd'] }
+      { id: 'ci-cd', name: 'CI/CD Pipeline', icon: '🚀', requiredPackages: ['pkg-ci-cd'] }
+    ]
+  },
+  {
+    id: 'soc',
+    name: 'SoC Features',
+    icon: '💻',
+    features: [
+      { id: 'O22', name: 'O22', icon: '💠', requiredPackages: ['pkg-O22'] },
+      { id: 'O24', name: 'O24', icon: '💠', requiredPackages: ['pkg-O24'] },
+      { id: 'O26', name: 'O26', icon: '💠', requiredPackages: ['pkg-O26'] },
+      { id: 'K8lpn', name: 'K8lpn', icon: '💠', requiredPackages: ['pkg-K8lpn'] },
+      { id: 'K8lpn2', name: 'K8lpn2', icon: '💠', requiredPackages: ['pkg-K8lpn2'] },
+      { id: 'K26', name: 'K26', icon: '💠', requiredPackages: ['pkg-K26'] }
     ]
   }
 ];
 
 const packageDependencies = {
+  // Core system
   'pkg-kernel': [],
   'pkg-process': ['pkg-kernel'],
   'pkg-memory': ['pkg-kernel'],
-  'pkg-security': [],
-  'pkg-drivers': ['pkg-kernel'],
-  'pkg-ipc': ['pkg-kernel'],
-  'pkg-logging': [],
-  'pkg-power': ['pkg-battery'],
+  'pkg-power': ['pkg-battery', 'pkg-kernel'],
   'pkg-battery': [],
-  'pkg-update': ['pkg-network', 'pkg-security'],
-  'pkg-video': ['pkg-codec', 'pkg-decoder', 'pkg-hdr', 'pkg-4k-video'],
-  'pkg-audio': ['pkg-decoder', 'pkg-audio-effects'],
-  'pkg-codec': [],
-  'pkg-decoder': [],
-  'pkg-subtitle': [],
-  'pkg-drm': ['pkg-secure'],
-  'pkg-secure': [],  
+  'pkg-drivers': ['pkg-kernel'],
+  'pkg-ipc': ['pkg-kernel', 'pkg-process'],
+  'pkg-logging': ['pkg-kernel'],
+  'pkg-security': ['pkg-kernel'],
+  'pkg-secureboot': ['pkg-kernel', 'pkg-security', 'pkg-drivers'],
+  'pkg-update': ['pkg-network', 'pkg-security', 'pkg-kernel'],
+
+  // Media
+  'pkg-video': ['pkg-codec', 'pkg-decoder', 'pkg-hdr', 'pkg-ui-core'],
+  'pkg-audio': ['pkg-decoder', 'pkg-audio-effects', 'pkg-ui-core'],
+  'pkg-codec': ['pkg-drivers'],
+  'pkg-decoder': ['pkg-codec'],
   'pkg-hdr': ['pkg-codec'],
-  'pkg-4k-video': ['pkg-codec'],
-  'pkg-wifi': ['pkg-network', 'pkg-security', 'pkg-firewall', 'pkg-waf'],
-  'pkg-bluetooth': ['pkg-security', 'pkg-bt-stack'],
-  'pkg-bt-stack': [],
-  'pkg-nfc': ['pkg-security'],
-  'pkg-ethernet': ['pkg-network'],
-  'pkg-cellular': ['pkg-network', 'pkg-sim'],
-  'pkg-sim': [],
-  'pkg-zigbee': ['pkg-network'],
-  'pkg-ble-mesh': ['pkg-bluetooth'],
-  'pkg-zwave': [],
-  'pkg-network': [],
+  'pkg-subtitle': ['pkg-ui-core'],
+  'pkg-drm': ['pkg-secure', 'pkg-security'],
+  'pkg-secure': ['pkg-security'],
+  'pkg-video-enhance': ['pkg-video'],
+  'pkg-audio-enhance': ['pkg-audio'],
+  'pkg-camera': ['pkg-drivers', 'pkg-ui-core'],
+
+  // Connectivity
+  'pkg-wifi': ['pkg-network', 'pkg-security', 'pkg-firewall', 'pkg-waf', 'pkg-drivers'],
+  'pkg-ethernet': ['pkg-network', 'pkg-drivers'],
+  'pkg-bluetooth': ['pkg-security', 'pkg-bt-stack', 'pkg-drivers'],
+  'pkg-bt-stack': ['pkg-drivers'],
+  'pkg-nfc': ['pkg-security', 'pkg-drivers'],
+  'pkg-vpn': ['pkg-network', 'pkg-security', 'pkg-firewall'],
+  'pkg-zigbee': ['pkg-network', 'pkg-drivers'],
+  'pkg-blemesh': ['pkg-bluetooth', 'pkg-network'],
+  'pkg-waf': ['pkg-network'],
   'pkg-firewall': ['pkg-network', 'pkg-waf'],
-  'pkg-waf': [],
-  'pkg-ddos': ['pkg-waf'],
-  'pkg-vpn': ['pkg-network', 'pkg-security'],
-  'pkg-secureboot': ['pkg-kernel', 'pkg-security'],
-  'pkg-antivirus': ['pkg-security'],
-  'pkg-knox': ['pkg-security', 'pkg-secureboot'],
-  'pkg-ml': ['pkg-nlp', 'pkg-cv', 'pkg-recommender', 'pkg-onnx-runtime'],
-  'pkg-ai': ['pkg-ml', 'pkg-gpu-accel'],
-  'pkg-assistant': ['pkg-ai', 'pkg-voice'],
-  'pkg-voice': ['pkg-nlp', 'pkg-audio'],
-  'pkg-nlp': [],
-  'pkg-cv': [],
-  'pkg-recommender': [],
-  'pkg-onnx-runtime': [],
-  'pkg-gpu-accel': [],
-  'pkg-launcher': [],
-  'pkg-flutter': ['pkg-skia', 'pkg-dart-runtime'],
-  'pkg-enact': ['pkg-react', 'pkg-nodejs'],
-  'pkg-lvgl': [],
-  'pkg-theme': [],
-  'pkg-darkmode': [],
-  'pkg-accessibility': [],
-  'pkg-skia': [],
-  'pkg-dart-runtime': [],
-  'pkg-react': [],
-  'pkg-nodejs': [],
-  'pkg-cloud': ['pkg-network', 'pkg-cloud-auth', 'pkg-cloud-storage', 'pkg-cloud-messaging'],
-  'pkg-cloud-storage': ['pkg-cloud-auth'],
-  'pkg-cloud-auth': [],
-  'pkg-cloud-messaging': ['pkg-cloud-auth'],
-  'pkg-remote': ['pkg-network', 'pkg-cloud'],
-  'pkg-ota': ['pkg-update', 'pkg-cloud'],
-  'pkg-debugger': [],
-  'pkg-profiler': [],
-  'pkg-perfmon': ['pkg-logging'],
-  'pkg-test': ['pkg-ci-cd'],
-  'pkg-remote-debug': ['pkg-network', 'pkg-debugger'],
-  'pkg-linter': [],
-  'pkg-ci-cd': [],
-  'pkg-broadcast': ['pkg-network', 'pkg-dvb'],
-  'pkg-dvb': [],
-  'pkg-airplay': ['pkg-network', 'pkg-secure'],
-  'pkg-chromecast': ['pkg-network'],
-  'pkg-youtube': ['pkg-network', 'pkg-video', 'pkg-drm'],
-  'pkg-netflix': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-secure'],
-  'pkg-browser': ['pkg-network', 'pkg-waf'],
-  'pkg-fs': [],
-  'pkg-sdcard': ['pkg-fs'],
-  'pkg-usb': ['pkg-fs']
+
+  // Apps
+  'pkg-netflix': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-secure', 'pkg-audio', 'pkg-ui-core'],
+  'pkg-youtube': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-audio', 'pkg-ui-core'],
+  'pkg-amazon-prime': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-audio', 'pkg-ui-core'],
+  'pkg-hulu': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-audio', 'pkg-ui-core'],
+  'pkg-browser': ['pkg-network', 'pkg-waf', 'pkg-ui-core'],
+
+  // Display & Audio
+  'pkg-panel': ['pkg-drivers', 'pkg-ui-core'],
+  'pkg-hdmi': ['pkg-drivers', 'pkg-ui-core'],
+  'pkg-hdr': ['pkg-codec', 'pkg-ui-core'],
+  'pkg-equalizer': ['pkg-audio', 'pkg-ui-core'],
+
+  // System Apps
+  'pkg-home-launcher': ['pkg-ui-core', 'pkg-network'],
+  'pkg-settings': ['pkg-ui-core'],
+  'pkg-file-manager': ['pkg-fs', 'pkg-ui-core'],
+  'pkg-package-manager': ['pkg-ui-core', 'pkg-network'],
+  'pkg-notification': ['pkg-ui-core'],
+  'pkg-system-ui': ['pkg-ui-core'],
+  'pkg-ime': ['pkg-ui-core'],
+  'pkg-power-manager': ['pkg-power', 'pkg-ui-core'],
+
+  // AI & Voice
+  'pkg-ai': ['pkg-ml', 'pkg-gpu-accel', 'pkg-ui-core'],
+  'pkg-voice-assistant': ['pkg-ai', 'pkg-voice', 'pkg-ui-core'],
+  'pkg-voice': ['pkg-nlp', 'pkg-audio', 'pkg-ui-core'],
+  'pkg-nlp': ['pkg-ai'],
+  'pkg-ml': ['pkg-ai', 'pkg-gpu-accel'],
+  'pkg-gpu-accel': ['pkg-drivers'],
+
+  // Cloud
+  'pkg-sdp': ['pkg-network', 'pkg-cloud-auth', 'pkg-ui-core'],
+  'pkg-thinq': ['pkg-network', 'pkg-ai', 'pkg-ui-core'],
+  'pkg-nsu': ['pkg-network', 'pkg-update'],
+
+  // Security
+  'pkg-antivirus': ['pkg-security', 'pkg-ui-core'],
+  'pkg-knox': ['pkg-security', 'pkg-secureboot', 'pkg-ui-core'],
+
+  // Developer Tools
+  'pkg-debugger': ['pkg-ui-core'],
+  'pkg-profiler': ['pkg-ui-core'],
+  'pkg-ci-cd': ['pkg-network', 'pkg-ui-core'],
+
+  // Broadcasting
+  'pkg-dvb-t2': ['pkg-network', 'pkg-security', 'pkg-codec', 'pkg-decoder', 'pkg-ui-core'],
+  'pkg-atsc': ['pkg-network', 'pkg-security', 'pkg-codec', 'pkg-decoder', 'pkg-ui-core'],
+  'pkg-isdb-t': ['pkg-network', 'pkg-security', 'pkg-codec', 'pkg-decoder', 'pkg-ui-core'],
+  'pkg-broadcast-app': ['pkg-network', 'pkg-drm', 'pkg-security', 'pkg-ui-core'],
+  'pkg-epg': ['pkg-network', 'pkg-ui-core']
 };
 
-const devicePresets = [
+const devicePresetsRaw = [
   {
     id: 'smart-tv',
     name: 'Smart TV',
     defaultFeatures: [
-      'video-player', 'audio-player', 'wifi', 'secure-boot', 'update-engine',
-      'drm', 'youtube-app', 'netflix-app', 'web-browser', 'launcher',
-      'voice-recognition', 'airplay', 'chromecast', 'subtitle-support',
-      'power-management-core', 'file-system', 'broadcasting'
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera', 'picture-quality', 'audio-quality',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      /* 앱 */
+      'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
+      /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd',
+      /* 방송 */
+      'dvb-t2', 'atsc', 'isdb-t', 'media-broadcast-app', 'epg'
     ]
   },
   {
     id: 'smart-monitor',
     name: 'Smart Monitor',
     defaultFeatures: [
-      'image-viewer', 'ethernet', 'theme-support', 'dark-mode', 'flutter',
-      'web-browser', 'wifi', 'power-management-core', 'file-system'
+     /* 코어 */
+     'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera', 'picture-quality', 'audio-quality',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      /* 앱 */
+      'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
+      /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd',
+    ]
+  },
+  {
+    id: 'standby-me',
+    name: 'Standby.me',
+    defaultFeatures: [
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera', 'picture-quality', 'audio-quality',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      /* 앱 */
+      'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
+      /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd',
     ]
   },
   {
     id: 'projector',
     name: 'Projector',
     defaultFeatures: [
-      'video-player', 'wifi', 'file-system', 'power-management-core',
-      'subtitle-support', 'update-engine'
-    ]
-  },
-  {
-    id: 'signage',
-    name: 'Signage',
-    defaultFeatures: [
-      'image-viewer', 'video-player', 'ethernet', 'power-management-core',
-      'file-system', 'cloud-sync', 'remote-management'
+  /* 코어 */
+  'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera', 'picture-quality', 'audio-quality',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      /* 앱 */
+      'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
+      /* 디스플레이/오디오 */
+      'hdmi-output', 'hdr-support', 'equalizer',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd',
+      /* 방송 */
+      'dvb-t2', 'atsc', 'isdb-t', 'media-broadcast-app', 'epg'
     ]
   },
   {
     id: 'hotel-tv',
     name: 'Hotel TV',
     defaultFeatures: [
-      'video-player', 'drm', 'wifi', 'secure-boot', 'subtitle-support',
-      'launcher', 'power-management-core', 'file-system', 'update-engine'
+  /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera', 'picture-quality', 'audio-quality',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      /* 앱 */
+      'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
+      /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd',
+      /* 방송 */
+      'dvb-t2', 'atsc', 'isdb-t', 'media-broadcast-app', 'epg'
+    ]
+  },
+  {
+    id: 'digital-signage',
+    name: 'Digital Signage',
+    defaultFeatures: [
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback',
+      /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 네트워크 */
+      'wifi', 'ethernet',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'system-ui',
+      /* 클라우드 */
+      'sdp', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox',
+      /* 개발 도구 */
+      'debugger', 'profiler'
     ]
   },
   {
     id: 'smart-hub',
     name: 'Smart Hub',
     defaultFeatures: [
-      'bluetooth', 'nfc', 'vpn', 'device-control', 'ai-framework',
-      'voice-assistant', 'wifi', 'cloud-sync', 'remote-management',
-      'power-management-core'
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 네트워크 */
+      'wifi', 'bluetooth', 'nfc', 'zigbee', 'blemesh',
+
+      /* 앱 */
+      'home-launcher', 'settings-app', 'package-manager', 'notification-manager', 'system-ui',
+      /* AI */
+      'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox', 'antivirus',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd'
     ]
   },
   {
     id: 'smart-refrigerator',
     name: 'Smart Refrigerator',
     defaultFeatures: [
-      'file-system', 'power-management-core', 'update-engine',
-      'cloud-sync', 'remote-management', 'wifi'
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+    'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
+      'camera',    
+      /* 네트워크 */
+      'wifi',
+     /* 디스플레이/오디오 */
+      'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
+      /* 앱 */
+      'youtube','web-browser',
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'system-ui',
+      /* 클라우드 */
+      'sdp', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall',
+      /* 개발 도구 */
+      'debugger'
     ]
   },
   {
-    id: 'smart-washing-machine',
-    name: 'Smart Washing Machine',
+    id: 'auto-content',
+    name: 'Automotive Content',
     defaultFeatures: [
-      'power-management-core', 'update-engine', 'wifi', 'remote-management'
-    ]
-  },
-  {
-    id: 'smart-speaker',
-    name: 'Smart Speaker',
-    defaultFeatures: [
-      'voice-recognition', 'voice-assistant', 'wifi', 'bluetooth', 'ai-framework',
-      'power-management-core'
-    ]
-  },
-  {
-    id: 'smart-light',
-    name: 'Smart Light',
-    defaultFeatures: [
-      'zigbee', 'wifi', 'device-control', 'power-management-core'
+      /* 코어 */
+      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
+      /* 미디어 */
+      'video-playback', 'audio-playback', 'subtitle-support',
+      /* 네트워크 */
+      'wifi', 'ethernet', 'bluetooth', 'vpn',
+      /* 앱 */
+      'navigation-app', 'media-player', 'voice-assistant', 'web-browser','netflix', 'youtube', 'amazon-prime', 'hulu', 
+      /* 시스템 앱 */
+      'home-launcher', 'settings-app', 'file-manager', 'notification-manager', 'system-ui',
+      /* AI */
+      'voice-recognition', 'nlp', 'ai-framework',
+      /* 클라우드 */
+      'sdp', 'thinq', 'nsu',
+      /* 보안 */
+      'secure-boot', 'firewall', 'knox',
+      /* 개발 도구 */
+      'debugger', 'profiler', 'ci-cd'
     ]
   }
 ];
+
+// 기본 코어 기능 자동 포함
+const coreFeatures = [
+  'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+  'interprocess-communication', 'system-logging', 'security-framework', 'system-update'
+];
+
+const devicePresets = devicePresetsRaw.map(preset => ({
+  ...preset,
+  defaultFeatures: Array.from(new Set([...coreFeatures, ...preset.defaultFeatures]))
+}));
+
 
 const presetSelect = document.getElementById('presetSelect');
 devicePresets.forEach(p => {
