@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>webOS Micro</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body,html { height: 100%; margin: 0; }
+    #featureList > div { cursor: default; }
+  </style>
+<style>
+  html,body { height: 100%; margin: 0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Apple SD Gothic Neo",sans-serif; background: #f5f5f7; color: #222; }
+  .apple-card { background: #fff; border-radius: 18px; box-shadow: 0 2px 16px 0 rgba(60,60,67,0.07), 0 1.5px 3px 0 rgba(60,60,67,0.04); padding: 1.2rem; margin-bottom: 1.2rem; }
+  .apple-header { height: 58px; background: linear-gradient(90deg, #f5f5f7 90%, #e9e9ec 100%); color: #1d1d1f; font-weight: 700; font-size: 1.45rem; display: flex; align-items: center; justify-content: center; letter-spacing: -.02em; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+  .apple-panel { border-right: 1px solid #ececec; background: #fafafc; }
+  .apple-label { color: #86868b; font-weight: 600; font-size: .97rem; }
+  .apple-btn { background: #f5f5f7; color: #1d1d1f; border-radius: 10px; border: 1px solid #e0e0e5; padding: 4px 14px; font-size: .96rem; transition: background .13s; }
+  .apple-btn:hover { background: #e5e5ea; }
+  .apple-input, select { background: #fff; border: 1px solid #e0e0e5; border-radius: 8px; padding: 6px 10px; font-size: .97rem; }
+  input[type="checkbox"]:checked { accent-color: #007aff; }
+  input[type="checkbox"]:indeterminate { accent-color: #b8b8be; }
+  .toggle-icon { font-size: 1.05rem; }
+  ::selection { background: #b2d7ff; }
+  #graph { background: #fff; border-radius: 18px; box-shadow: 0 2px 16px 0 rgba(60,60,67,0.06); }
+  footer { background: #f5f5f7; color: #86868b; border-top: 1px solid #e0e0e5; }
+  ::-webkit-scrollbar { width: 8px; background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #e2e2e7; border-radius: 8px; }
+</style>
+
+</head>
+<body class="flex flex-col h-screen">
+  <header class="h-14 bg-gray-800 text-white flex items-center justify-center text-xl font-bold">
+    webOS Micro
+  </header>
+  <main class="flex flex-1 overflow-hidden">
+    <!-- Left Panel -->
+    <section class="w-1/4 border-r flex flex-col">
+      <div class="p-2 border-b">
+        <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device</label>
+        <select id="presetSelect" class="w-full apple-input mb-3">
+          <option value="">-- Select Device --</option>
+          <option value="smart-tv">Smart TV</option>
+          <option value="smart-monitor">Smart Monitor</option>
+          <option value="projector">Projector</option>
+          <option value="signage">Signage</option>
+          <option value="hotel-tv">Hotel TV</option>
+          <option value="smart-hub">Smart Hub</option>
+          <option value="smart-refrigerator">Smart Refrigerator</option>
+          <option value="smart-washing-machine">Smart Washing Machine</option>
+        </select>
+        <div class="text-base font-semibold mb-1">Select Features</div>
+        <div class="flex justify-end space-x-2">
+          <button id="toggleExpand" class="text-gray-700 text-sm">▼</button>
+          <button id="toggleSelect" class="text-gray-700 text-sm">☐</button>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto p-2" id="featureList"></div>
+    </section>
+    <!-- Center Panel -->
+    <section class="w-1/4 border-r p-2 flex flex-col space-y-2 overflow-hidden">
+      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+        <h2 class="font-semibold mb-1">Selected Features</h2>
+        <ul id="selectedFeatures" class="text-sm list-disc list-inside"></ul>
+      </div>
+      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+        <h2 class="font-semibold mb-1">Packages to Install</h2>
+        <ul id="packageList" class="text-sm list-disc list-inside"></ul>
+      </div>
+      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+        <h2 class="font-semibold mb-1">Estimated Image Size</h2>
+        <p id="imageSize" class="text-sm">-</p>
+      </div>
+      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+        <h2 class="font-semibold mb-1">Dependency Summary</h2>
+        <ul id="dependencyList" class="text-sm list-disc list-inside"></ul>
+      </div>
+    </section>
+    <!-- Right Panel -->
+    <section class="w-1/2 p-2">
+      <div id="graph" class="w-full h-full border rounded"></div>
+    </section>
+  </main>
+  <footer class="h-10 bg-gray-200 text-xs flex items-center px-4">
+    Status: <span id="statusText">-</span>
+    <button id="exportBtn" class="ml-auto px-2 py-1 text-xs border rounded bg-white hover:bg-gray-100">Export</button>
+  </footer>
+<script>
+
+const categories = [
+  {
+    id: 'core',
+    name: 'Core System',
+    icon: '🧩',
+    features: [
+      { id: 'kernel', name: 'Kernel & OS', icon: '🖥️', requiredPackages: ['pkg-kernel'] },
+      { id: 'process-management', name: 'Process Management', icon: '⚙️', requiredPackages: ['pkg-process'] },
+      { id: 'memory-management', name: 'Memory Management', icon: '🧠', requiredPackages: ['pkg-memory'] },
+      { id: 'security-framework', name: 'Security Framework', icon: '🔐', requiredPackages: ['pkg-security'] },
+      { id: 'device-drivers', name: 'Device Drivers', icon: '🔌', requiredPackages: ['pkg-drivers'] },
+      { id: 'inter-process-communication', name: 'IPC & Messaging', icon: '📡', requiredPackages: ['pkg-ipc'] },
+      { id: 'logging', name: 'System Logging', icon: '📝', requiredPackages: ['pkg-logging'] },
+      { id: 'power-management-core', name: 'Power Management Core', icon: '🔋', requiredPackages: ['pkg-power'] },
+      { id: 'update-engine', name: 'System Update Engine', icon: '⬆️', requiredPackages: ['pkg-update'] }
+    ]
+  },
+  {
+    id: 'media',
+    name: 'Media & Streaming',
+    icon: '📺',
+    features: [
+      { id: 'video-player', name: 'Video Player', icon: '🎞️', requiredPackages: ['pkg-video', 'pkg-codec', 'pkg-decoder', 'pkg-hdr', 'pkg-4k-video'] },
+      { id: 'audio-player', name: 'Audio Player', icon: '🎵', requiredPackages: ['pkg-audio', 'pkg-decoder', 'pkg-audio-effects'] },
+      { id: 'subtitle-support', name: 'Subtitle Support', icon: '💬', requiredPackages: ['pkg-subtitle'] },
+      { id: 'drm', name: 'Digital Rights Management', icon: '🔒', requiredPackages: ['pkg-drm', 'pkg-secure'] },
+      { id: 'broadcasting', name: 'Broadcasting (DVB, ATSC)', icon: '📡', requiredPackages: ['pkg-broadcast', 'pkg-dvb'] },
+      { id: 'airplay', name: 'AirPlay Support', icon: '🍎', requiredPackages: ['pkg-airplay', 'pkg-secure'] },
+      { id: 'chromecast', name: 'Chromecast Support', icon: '🎯', requiredPackages: ['pkg-chromecast'] },
+      { id: 'youtube-app', name: 'YouTube App', icon: '▶️', requiredPackages: ['pkg-youtube', 'pkg-video', 'pkg-network', 'pkg-drm'] },
+      { id: 'netflix-app', name: 'Netflix App', icon: '🎬', requiredPackages: ['pkg-netflix', 'pkg-video', 'pkg-drm', 'pkg-network', 'pkg-secure'] },
+      { id: 'web-browser', name: 'Web Browser', icon: '🌐', requiredPackages: ['pkg-browser', 'pkg-network', 'pkg-waf'] }
+    ]
+  },
+  {
+    id: 'connectivity',
+    name: 'Connectivity',
+    icon: '🌐',
+    features: [
+      { id: 'wifi', name: 'Wi-Fi', icon: '📶', requiredPackages: ['pkg-wifi', 'pkg-network', 'pkg-security', 'pkg-firewall', 'pkg-waf'] },
+      { id: 'bluetooth', name: 'Bluetooth', icon: '🔵', requiredPackages: ['pkg-bluetooth', 'pkg-security', 'pkg-bt-stack'] },
+      { id: 'nfc', name: 'NFC', icon: '📳', requiredPackages: ['pkg-nfc', 'pkg-security'] },
+      { id: 'ethernet', name: 'Ethernet', icon: '🔌', requiredPackages: ['pkg-ethernet', 'pkg-network'] },
+      { id: 'cellular', name: 'Cellular (Android)', icon: '📡', requiredPackages: ['pkg-cellular', 'pkg-network', 'pkg-sim'] },
+      { id: 'zigbee', name: 'Zigbee (Tizen IoT)', icon: '⚡', requiredPackages: ['pkg-zigbee', 'pkg-network'] },
+      { id: 'ble-mesh', name: 'BLE Mesh', icon: '📶', requiredPackages: ['pkg-ble-mesh', 'pkg-bluetooth'] },
+      { id: 'zwave', name: 'Z-Wave', icon: '⚙️', requiredPackages: ['pkg-zwave'] },
+      { id: 'vpn', name: 'VPN', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn', 'pkg-network', 'pkg-security'] }
+    ]
+  },
+  {
+    id: 'security',
+    name: 'Security',
+    icon: '🛡️',
+    features: [
+      { id: 'secure-boot', name: 'Secure Boot', icon: '🔐', requiredPackages: ['pkg-secureboot', 'pkg-kernel', 'pkg-security'] },
+      { id: 'firewall', name: 'Firewall', icon: '🔥', requiredPackages: ['pkg-firewall', 'pkg-network'] },
+      { id: 'vpn-sec', name: 'VPN', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn', 'pkg-network', 'pkg-security'] },
+      { id: 'antivirus', name: 'Antivirus', icon: '🦠', requiredPackages: ['pkg-antivirus', 'pkg-security'] },
+      { id: 'knox', name: 'Knox Security (Android)', icon: '🛡️', requiredPackages: ['pkg-knox', 'pkg-security', 'pkg-secureboot'] }
+    ]
+  },
+  {
+    id: 'ai',
+    name: 'AI & Voice',
+    icon: '🗣️',
+    features: [
+      { id: 'voice-recognition', name: 'Voice Recognition', icon: '🎙️', requiredPackages: ['pkg-voice', 'pkg-nlp', 'pkg-ai', 'pkg-audio'] },
+      { id: 'voice-assistant', name: 'Voice Assistant', icon: '🤖', requiredPackages: ['pkg-assistant', 'pkg-ai', 'pkg-voice'] },
+      { id: 'ai-framework', name: 'AI Framework', icon: '🧠', requiredPackages: ['pkg-ai', 'pkg-ml', 'pkg-gpu-accel'] }
+    ]
+  },
+  {
+    id: 'ui',
+    name: 'UI Frameworks',
+    icon: '🖥️',
+    features: [
+      { id: 'launcher', name: 'Launcher', icon: '🏠', requiredPackages: ['pkg-launcher'] },
+      { id: 'flutter', name: 'Flutter Support', icon: '🦋', requiredPackages: ['pkg-flutter', 'pkg-skia', 'pkg-dart-runtime'] },
+      { id: 'enact', name: 'Enact Framework', icon: '⚛️', requiredPackages: ['pkg-enact', 'pkg-react', 'pkg-nodejs'] },
+      { id: 'lvgl', name: 'LVGL UI Engine', icon: '🎨', requiredPackages: ['pkg-lvgl'] },
+      { id: 'theme-support', name: 'Theme Support', icon: '🎭', requiredPackages: ['pkg-theme'] },
+      { id: 'dark-mode', name: 'Dark Mode (Android)', icon: '🌙', requiredPackages: ['pkg-darkmode'] },
+      { id: 'accessibility', name: 'Accessibility (Android)', icon: '♿', requiredPackages: ['pkg-accessibility'] }
+    ]
+  },
+  {
+    id: 'cloud',
+    name: 'Cloud & Services',
+    icon: '☁️',
+    features: [
+      { id: 'cloud-sync', name: 'Cloud Sync', icon: '🔄', requiredPackages: ['pkg-cloud', 'pkg-cloud-auth', 'pkg-cloud-storage', 'pkg-cloud-messaging'] },
+      { id: 'ota-update', name: 'Over-the-Air Update', icon: '⬆️', requiredPackages: ['pkg-ota', 'pkg-update', 'pkg-network', 'pkg-cloud'] },
+      { id: 'remote-management', name: 'Remote Device Management', icon: '📡', requiredPackages: ['pkg-remote', 'pkg-network', 'pkg-cloud'] }
+    ]
+  },
+  {
+    id: 'devtools',
+    name: 'Developer Tools',
+    icon: '🛠️',
+    features: [
+      { id: 'debugger', name: 'Debugger', icon: '🐞', requiredPackages: ['pkg-debugger'] },
+      { id: 'profiler', name: 'Profiler', icon: '📊', requiredPackages: ['pkg-profiler'] },
+      { id: 'log-viewer', name: 'Log Viewer', icon: '📜', requiredPackages: ['pkg-logging'] },
+      { id: 'performance-monitor', name: 'Performance Monitor', icon: '⏱️', requiredPackages: ['pkg-perfmon', 'pkg-logging'] },
+      { id: 'test-framework', name: 'Test Framework', icon: '✅', requiredPackages: ['pkg-test', 'pkg-ci-cd'] },
+      { id: 'remote-debug', name: 'Remote Debugging', icon: '🌐', requiredPackages: ['pkg-remote-debug', 'pkg-network', 'pkg-debugger'] },
+      { id: 'linter', name: 'Linter', icon: '📝', requiredPackages: ['pkg-linter'] },
+      { id: 'ci-cd', name: 'CI/CD', icon: '🚀', requiredPackages: ['pkg-ci-cd'] }
+    ]
+  }
+];
+
+const packageDependencies = {
+  'pkg-kernel': [],
+  'pkg-process': ['pkg-kernel'],
+  'pkg-memory': ['pkg-kernel'],
+  'pkg-security': [],
+  'pkg-drivers': ['pkg-kernel'],
+  'pkg-ipc': ['pkg-kernel'],
+  'pkg-logging': [],
+  'pkg-power': ['pkg-battery'],
+  'pkg-battery': [],
+  'pkg-update': ['pkg-network', 'pkg-security'],
+  'pkg-video': ['pkg-codec', 'pkg-decoder', 'pkg-hdr', 'pkg-4k-video'],
+  'pkg-audio': ['pkg-decoder', 'pkg-audio-effects'],
+  'pkg-codec': [],
+  'pkg-decoder': [],
+  'pkg-subtitle': [],
+  'pkg-drm': ['pkg-secure'],
+  'pkg-secure': [],  
+  'pkg-hdr': ['pkg-codec'],
+  'pkg-4k-video': ['pkg-codec'],
+  'pkg-wifi': ['pkg-network', 'pkg-security', 'pkg-firewall', 'pkg-waf'],
+  'pkg-bluetooth': ['pkg-security', 'pkg-bt-stack'],
+  'pkg-bt-stack': [],
+  'pkg-nfc': ['pkg-security'],
+  'pkg-ethernet': ['pkg-network'],
+  'pkg-cellular': ['pkg-network', 'pkg-sim'],
+  'pkg-sim': [],
+  'pkg-zigbee': ['pkg-network'],
+  'pkg-ble-mesh': ['pkg-bluetooth'],
+  'pkg-zwave': [],
+  'pkg-network': [],
+  'pkg-firewall': ['pkg-network', 'pkg-waf'],
+  'pkg-waf': [],
+  'pkg-ddos': ['pkg-waf'],
+  'pkg-vpn': ['pkg-network', 'pkg-security'],
+  'pkg-secureboot': ['pkg-kernel', 'pkg-security'],
+  'pkg-antivirus': ['pkg-security'],
+  'pkg-knox': ['pkg-security', 'pkg-secureboot'],
+  'pkg-ml': ['pkg-nlp', 'pkg-cv', 'pkg-recommender', 'pkg-onnx-runtime'],
+  'pkg-ai': ['pkg-ml', 'pkg-gpu-accel'],
+  'pkg-assistant': ['pkg-ai', 'pkg-voice'],
+  'pkg-voice': ['pkg-nlp', 'pkg-audio'],
+  'pkg-nlp': [],
+  'pkg-cv': [],
+  'pkg-recommender': [],
+  'pkg-onnx-runtime': [],
+  'pkg-gpu-accel': [],
+  'pkg-launcher': [],
+  'pkg-flutter': ['pkg-skia', 'pkg-dart-runtime'],
+  'pkg-enact': ['pkg-react', 'pkg-nodejs'],
+  'pkg-lvgl': [],
+  'pkg-theme': [],
+  'pkg-darkmode': [],
+  'pkg-accessibility': [],
+  'pkg-skia': [],
+  'pkg-dart-runtime': [],
+  'pkg-react': [],
+  'pkg-nodejs': [],
+  'pkg-cloud': ['pkg-network', 'pkg-cloud-auth', 'pkg-cloud-storage', 'pkg-cloud-messaging'],
+  'pkg-cloud-storage': ['pkg-cloud-auth'],
+  'pkg-cloud-auth': [],
+  'pkg-cloud-messaging': ['pkg-cloud-auth'],
+  'pkg-remote': ['pkg-network', 'pkg-cloud'],
+  'pkg-ota': ['pkg-update', 'pkg-cloud'],
+  'pkg-debugger': [],
+  'pkg-profiler': [],
+  'pkg-perfmon': ['pkg-logging'],
+  'pkg-test': ['pkg-ci-cd'],
+  'pkg-remote-debug': ['pkg-network', 'pkg-debugger'],
+  'pkg-linter': [],
+  'pkg-ci-cd': [],
+  'pkg-broadcast': ['pkg-network', 'pkg-dvb'],
+  'pkg-dvb': [],
+  'pkg-airplay': ['pkg-network', 'pkg-secure'],
+  'pkg-chromecast': ['pkg-network'],
+  'pkg-youtube': ['pkg-network', 'pkg-video', 'pkg-drm'],
+  'pkg-netflix': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-secure'],
+  'pkg-browser': ['pkg-network', 'pkg-waf'],
+  'pkg-fs': [],
+  'pkg-sdcard': ['pkg-fs'],
+  'pkg-usb': ['pkg-fs']
+};
+
+const devicePresets = [
+  {
+    id: 'smart-tv',
+    name: 'Smart TV',
+    defaultFeatures: [
+      'video-player', 'audio-player', 'wifi', 'secure-boot', 'update-engine',
+      'drm', 'youtube-app', 'netflix-app', 'web-browser', 'launcher',
+      'voice-recognition', 'airplay', 'chromecast', 'subtitle-support',
+      'power-management-core', 'file-system', 'broadcasting'
+    ]
+  },
+  {
+    id: 'smart-monitor',
+    name: 'Smart Monitor',
+    defaultFeatures: [
+      'image-viewer', 'ethernet', 'theme-support', 'dark-mode', 'flutter',
+      'web-browser', 'wifi', 'power-management-core', 'file-system'
+    ]
+  },
+  {
+    id: 'projector',
+    name: 'Projector',
+    defaultFeatures: [
+      'video-player', 'wifi', 'file-system', 'power-management-core',
+      'subtitle-support', 'update-engine'
+    ]
+  },
+  {
+    id: 'signage',
+    name: 'Signage',
+    defaultFeatures: [
+      'image-viewer', 'video-player', 'ethernet', 'power-management-core',
+      'file-system', 'cloud-sync', 'remote-management'
+    ]
+  },
+  {
+    id: 'hotel-tv',
+    name: 'Hotel TV',
+    defaultFeatures: [
+      'video-player', 'drm', 'wifi', 'secure-boot', 'subtitle-support',
+      'launcher', 'power-management-core', 'file-system', 'update-engine'
+    ]
+  },
+  {
+    id: 'smart-hub',
+    name: 'Smart Hub',
+    defaultFeatures: [
+      'bluetooth', 'nfc', 'vpn', 'device-control', 'ai-framework',
+      'voice-assistant', 'wifi', 'cloud-sync', 'remote-management',
+      'power-management-core'
+    ]
+  },
+  {
+    id: 'smart-refrigerator',
+    name: 'Smart Refrigerator',
+    defaultFeatures: [
+      'file-system', 'power-management-core', 'update-engine',
+      'cloud-sync', 'remote-management', 'wifi'
+    ]
+  },
+  {
+    id: 'smart-washing-machine',
+    name: 'Smart Washing Machine',
+    defaultFeatures: [
+      'power-management-core', 'update-engine', 'wifi', 'remote-management'
+    ]
+  },
+  {
+    id: 'smart-speaker',
+    name: 'Smart Speaker',
+    defaultFeatures: [
+      'voice-recognition', 'voice-assistant', 'wifi', 'bluetooth', 'ai-framework',
+      'power-management-core'
+    ]
+  },
+  {
+    id: 'smart-light',
+    name: 'Smart Light',
+    defaultFeatures: [
+      'zigbee', 'wifi', 'device-control', 'power-management-core'
+    ]
+  }
+];
+
+let selectedFeatures = new Set();
+let allExpanded = false;
+let allSelected = false;
+
+function updateCategoryCheckboxStates() {
+  categories.forEach(cat => {
+    const catCheckbox = document.querySelector(`input[type="checkbox"][data-cat='${cat.id}']`);
+    if (!catCheckbox) return;
+    const allFeatureIds = cat.features.map(f => f.id);
+    const checkedCount = allFeatureIds.filter(fid => selectedFeatures.has(fid)).length;
+    catCheckbox.checked = checkedCount === allFeatureIds.length;
+    catCheckbox.indeterminate = checkedCount > 0 && checkedCount < allFeatureIds.length;
+  });
+}
+
+function updateUI() {
+  const featureUl = document.getElementById('selectedFeatures');
+  const packageUl = document.getElementById('packageList');
+  const depUl = document.getElementById('dependencyList');
+  const statusText = document.getElementById('statusText');
+
+  featureUl.innerHTML = '';
+  packageUl.innerHTML = '';
+  depUl.innerHTML = '';
+
+  const packages = new Set();
+  selectedFeatures.forEach(fid => {
+    const feature = categories.flatMap(c => c.features).find(f => f.id === fid);
+    if (feature) {
+      featureUl.innerHTML += `<li>${feature.name}</li>`;
+      feature.requiredPackages.forEach(pkg => packages.add(pkg));
+    }
+  });
+
+  let totalSize = 0;
+  packages.forEach(pkg => {
+    packageUl.innerHTML += `<li>${pkg}</li>`;
+    (packageDependencies[pkg] || []).forEach(dep => {
+      depUl.innerHTML += `<li>${pkg} → ${dep}</li>`;
+    });
+    totalSize += 5;
+  });
+
+  document.getElementById('imageSize').innerText = `${totalSize} MB`;
+  const totalFeatures = categories.reduce((acc, c) => acc + c.features.length, 0);
+  const totalPackages = Object.keys(packageDependencies).length;
+  statusText.innerText = `${selectedFeatures.size} / ${totalFeatures} features selected | ${packages.size} / ${totalPackages} packages`;
+
+  updateCategoryCheckboxStates();
+  drawGraph(packages);
+}
+
+function drawGraph(pkgs) {
+  const nodes = [], edges = [];
+  const added = new Set();
+  pkgs.forEach(pkg => {
+    if (!added.has(pkg)) {
+      nodes.push({ id: pkg, label: pkg });
+      added.add(pkg);
+    }
+    (packageDependencies[pkg] || []).forEach(dep => {
+      if (!added.has(dep)) {
+        nodes.push({ id: dep, label: dep });
+        added.add(dep);
+      }
+      edges.push({ from: pkg, to: dep });
+    });
+  });
+
+  const container = document.getElementById('graph');
+  const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+  new vis.Network(container, data, {
+    nodes: { shape: 'box' },
+    physics: { enabled: true }
+  });
+}
+
+function renderFeatureList() {
+  const container = document.getElementById('featureList');
+  container.innerHTML = '';
+
+  categories.forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'mb-4';
+
+    const header = document.createElement('div');
+    header.className = 'flex items-center justify-between cursor-pointer';
+    header.innerHTML = `<div class="flex items-center space-x-2">
+      <span class="toggle-icon">${allExpanded ? '▼' : '▶'}</span>
+      <span>${cat.icon}</span>
+      <span class="font-medium">${cat.name}</span>
+    </div>
+    <input type="checkbox" data-cat="${cat.id}" />`;
+
+    const body = document.createElement('div');
+    body.className = 'ml-6 mt-2 space-y-1';
+    body.dataset.catBody = cat.id;
+    body.style.display = allExpanded ? 'block' : 'none';
+
+    cat.features.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between';
+      row.innerHTML = `<div class="flex items-center space-x-2">
+        <span>${f.icon}</span><span>${f.name}</span>
+      </div>
+      <input type="checkbox" data-feature="${f.id}" />`;
+      body.appendChild(row);
+    });
+
+    header.querySelector('.toggle-icon').addEventListener('click', () => {
+      const current = body.style.display;
+      body.style.display = current === 'none' ? 'block' : 'none';
+      header.querySelector('.toggle-icon').textContent = body.style.display === 'none' ? '▶' : '▼';
+    });
+
+    section.appendChild(header);
+    section.appendChild(body);
+    container.appendChild(section);
+  });
+
+  container.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb => {
+    cb.addEventListener('change', e => {
+      const fid = e.target.dataset.feature;
+      if (e.target.checked) selectedFeatures.add(fid);
+      else selectedFeatures.delete(fid);
+      updateUI();
+    });
+  });
+
+  container.querySelectorAll('input[type="checkbox"][data-cat]').forEach(cb => {
+    cb.addEventListener('change', e => {
+      const catId = e.target.dataset.cat;
+      const cat = categories.find(c => c.id === catId);
+      cat.features.forEach(f => {
+        const input = container.querySelector(`input[data-feature='${f.id}']`);
+        input.checked = e.target.checked;
+        if (e.target.checked) selectedFeatures.add(f.id);
+        else selectedFeatures.delete(f.id);
+      });
+      updateUI();
+    });
+  });
+}
+
+
+document.getElementById('presetSelect').addEventListener('change', e => {
+  const preset = devicePresets.find(p => p.id === e.target.value);
+  if (!preset) return;
+  selectedFeatures.clear();
+  preset.defaultFeatures.forEach(fid => selectedFeatures.add(fid));
+  document.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb => {
+    cb.checked = selectedFeatures.has(cb.dataset.feature);
+  });
+  updateUI();
+});
+
+document.getElementById('toggleExpand').addEventListener('click', () => {
+  allExpanded = !allExpanded;
+  document.querySelectorAll('[data-cat-body]').forEach(div => {
+    div.style.display = allExpanded ? 'block' : 'none';
+  });
+  document.querySelectorAll('.toggle-icon').forEach(icon => {
+    icon.textContent = allExpanded ? '▼' : '▶';
+  });
+  document.getElementById('toggleExpand').textContent = allExpanded ? '▲' : '▼';
+});
+
+document.getElementById('toggleSelect').addEventListener('click', () => {
+  allSelected = !allSelected;
+  document.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb => {
+    cb.checked = allSelected;
+    const fid = cb.dataset.feature;
+    if (allSelected) selectedFeatures.add(fid);
+    else selectedFeatures.delete(fid);
+  });
+  updateUI();
+  document.getElementById('toggleSelect').textContent = allSelected ? '☑' : '☐';
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const features = Array.from(selectedFeatures);
+  const packages = [];
+  features.forEach(fid => {
+    const feature = categories.flatMap(c => c.features).find(f => f.id === fid);
+    if (feature) {
+      feature.requiredPackages.forEach(pkg => {
+        if (!packages.includes(pkg)) packages.push(pkg);
+      });
+    }
+  });
+
+  const deps = [];
+  packages.forEach(pkg => {
+    (packageDependencies[pkg] || []).forEach(dep => {
+      deps.push({ from: pkg, to: dep });
+    });
+  });
+
+  const exportData = {
+    selectedFeatures: features,
+    requiredPackages: packages,
+    dependencies: deps
+  };
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'webos_selection.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+renderFeatureList();
+updateUI();
+</script>
+</body>
+</html>
