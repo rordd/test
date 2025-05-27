@@ -1,104 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>webOS Micro</title>
-  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <style>
-    body,html { height: 100%; margin: 0; }
-    #featureList > div { cursor: default; }
-    html,body { height: 100%; margin: 0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Apple SD Gothic Neo",sans-serif; background: #f5f5f7; color: #222; }
-    .apple-card { background: #fff; border-radius: 18px; box-shadow: 0 2px 16px 0 rgba(60,60,67,0.07), 0 1.5px 3px 0 rgba(60,60,67,0.04); padding: 1.2rem; margin-bottom: 1.2rem; }
-    .apple-header { height: 58px; background: linear-gradient(90deg, #f5f5f7 90%, #e9e9ec 100%); color: #1d1d1f; font-weight: 700; font-size: 1.45rem; display: flex; align-items: center; justify-content: center; letter-spacing: -.02em; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
-    .apple-panel { border-right: 1px solid #ececec; background: #fafafc; }
-    .apple-label { color: #86868b; font-weight: 600; font-size: .97rem; }
-    .apple-btn { background: #f5f5f7; color: #1d1d1f; border-radius: 10px; border: 1px solid #e0e0e5; padding: 4px 14px; font-size: .96rem; transition: background .13s; }
-    .apple-btn:hover { background: #e5e5ea; }
-    .apple-input, select { background: #fff; border: 1px solid #e0e0e5; border-radius: 8px; padding: 6px 10px; font-size: .97rem; }
-    input[type="checkbox"]:checked { accent-color: #007aff; }
-    input[type="checkbox"]:indeterminate { accent-color: #b8b8be; }
-    .toggle-icon { font-size: 1.05rem; }
-    ::selection { background: #b2d7ff; }
-    #graph { background: #fff; border-radius: 18px; box-shadow: 0 2px 16px 0 rgba(60,60,67,0.06); }
-    footer { background: #f5f5f7; color: #86868b; border-top: 1px solid #e0e0e5; }
-    ::-webkit-scrollbar { width: 8px; background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #e2e2e7; border-radius: 8px; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>webOS Micro</title>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", sans-serif;
+    background: #f5f5f7;
+    color: #222;
+  }
+  #featureList > div {
+    cursor: default;
+  }
+  .apple-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(60,60,67,0.07), 0 1.5px 3px 0 rgba(60,60,67,0.04);
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .apple-header {
+    height: 58px;
+    background: linear-gradient(90deg, #f5f5f7 90%, #e9e9ec 100%);
+    color: #1d1d1f;
+    font-weight: 700;
+    font-size: 1.45rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -.02em;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  }
+  .apple-panel {
+    border-right: 1px solid #ececec;
+    background: #fafafc;
+  }
+  .apple-label {
+    color: #86868b;
+    font-weight: 600;
+    font-size: .97rem;
+  }
+  .apple-btn {
+    background: #f5f5f7;
+    color: #1d1d1f;
+    border-radius: 10px;
+    border: 1px solid #e0e0e5;
+    padding: 4px 14px;
+    font-size: .96rem;
+    transition: background .13s;
+  }
+  .apple-btn:hover {
+    background: #e5e5ea;
+  }
+  .apple-input, select {
+    background: #fff;
+    border: 1px solid #e0e0e5;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: .97rem;
+  }
+  input[type="checkbox"]:checked {
+    accent-color: #007aff;
+  }
+  input[type="checkbox"]:indeterminate {
+    accent-color: #b8b8be;
+  }
+  .toggle-icon {
+    font-size: 1.05rem;
+  }
+  ::selection {
+    background: #b2d7ff;
+  }
+  #graph {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(60,60,67,0.06);
+  }
+  footer {
+    background: #f5f5f7;
+    color: #86868b;
+    border-top: 1px solid #e0e0e5;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #e2e2e7;
+    border-radius: 8px;
+  }
 
-    /* 모바일 전체 스크롤 + 패널 자동 높이 + 최소 높이 */
-    @media (max-width: 768px) {
-      main {
-        flex-direction: column;
-        overflow-y: visible !important;
-        height: auto !important;
-      }
-      main > section {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 300px;
-        border-right: none !important;
-        border-bottom: 1px solid #ddd;
-        overflow: visible !important;
-      }
-      main > section:last-child {
-        border-bottom: none;
-      }
-      /* 내부 스크롤 제거 */
-      .overflow-y-auto {
-        overflow-y: visible !important;
-        max-height: none !important;
-      }
+  /* PC layout */
+  main {
+    display: flex;
+    flex: 1;
+    overflow: hidden; /* Prevent full page scroll on PC */
+  }
+  section {
+    overflow: hidden;
+  }
+  .overflow-y-auto {
+    overflow-y: auto; /* Each panel can scroll */
+  }
+
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    main {
+      flex-direction: column !important;
+      overflow-y: auto !important;
+      height: auto !important;
     }
-  </style>
+    main > section {
+      width: 100% !important;
+      height: auto !important;
+      min-height: 300px;
+      border-right: none !important;
+      border-bottom: 1px solid #ddd;
+      overflow: visible !important;
+    }
+    main > section:last-child {
+      border-bottom: none;
+    }
+    .overflow-y-auto {
+      overflow-y: visible !important;
+      max-height: none !important;
+    }
+  }
+  @media (max-width: 768px) {
+    main {
+      flex-direction: column !important;
+      overflow-y: auto !important;
+      height: auto !important;
+    }
+    main > section {
+      width: 100% !important;
+      height: auto !important;
+      min-height: 300px;
+      border-right: none !important;
+      border-bottom: 1px solid #ddd;
+      overflow: visible !important;
+    }
+    main > section:last-child {
+      border-bottom: none;
+    }
+    .overflow-y-auto {
+      overflow-y: visible !important;
+      max-height: none !important;
+    }
+  }
+</style>
 </head>
 <body class="flex flex-col h-screen">
-  <header class="h-14 bg-gray-800 text-white flex items-center justify-center text-xl font-bold">
-    webOS Micro
-  </header>
-  <main class="flex flex-1">
-    <section class="w-1/4 border-r flex flex-col">
-      <div class="p-2 border-b">
-        <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device</label>
-        <select id="presetSelect" class="w-full apple-input mb-3">
-          <option value="">-- Select Device --</option>
-          <option value="smart-tv">Smart TV</option>
-          <option value="smart-speaker">Smart Speaker</option>
-        </select>
-        <div class="text-base font-semibold mb-1">Select Features</div>
-        <div class="flex justify-end space-x-2">
-          <button id="toggleExpand" class="text-gray-700 text-sm">▼</button>
-          <button id="toggleSelect" class="text-gray-700 text-sm">☐</button>
-        </div>
+<header class="h-14 bg-gray-800 text-white flex items-center justify-center text-xl font-bold">
+  webOS Micro
+</header>
+<main>
+  <section class="w-1/4 border-r flex flex-col">
+    <div class="p-2 border-b">
+      <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device</label>
+      <select id="presetSelect" class="w-full apple-input mb-3">
+        <option value="">-- Select Device --</option>
+        <option value="smart-tv">Smart TV</option>
+        <option value="smart-speaker">Smart Speaker</option>
+      </select>
+      <div class="text-base font-semibold mb-1">Select Features</div>
+      <div class="flex justify-end space-x-2">
+        <button id="toggleExpand" class="text-gray-700 text-sm">▼</button>
+        <button id="toggleSelect" class="text-gray-700 text-sm">☐</button>
       </div>
-      <div class="flex-1 overflow-y-auto p-2" id="featureList"></div>
-    </section>
-    <section class="w-1/4 border-r p-2 flex flex-col space-y-2 overflow-hidden">
-      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
-        <h2 class="font-semibold mb-1">Selected Features</h2>
-        <ul id="selectedFeatures" class="text-sm list-disc list-inside"></ul>
-      </div>
-      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
-        <h2 class="font-semibold mb-1">Packages to Install</h2>
-        <ul id="packageList" class="text-sm list-disc list-inside"></ul>
-      </div>
-      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
-        <h2 class="font-semibold mb-1">Estimated Image Size</h2>
-        <p id="imageSize" class="text-sm">-</p>
-      </div>
-      <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
-        <h2 class="font-semibold mb-1">Dependency Summary</h2>
-        <ul id="dependencyList" class="text-sm list-disc list-inside"></ul>
-      </div>
-    </section>
-    <section class="w-1/2 p-2">
-      <div id="graph" class="w-full h-full border rounded"></div>
-    </section>
-  </main>
-  <footer class="h-10 bg-gray-200 text-xs flex items-center px-4">
-    Status: <span id="statusText">-</span>
-    <button id="exportBtn" class="ml-auto px-2 py-1 text-xs border rounded bg-white hover:bg-gray-100">Export</button>
-  </footer>
+    </div>
+    <div class="flex-1 overflow-y-auto p-2" id="featureList"></div>
+  </section>
+  <section class="w-1/4 border-r p-2 flex flex-col space-y-2 overflow-hidden">
+    <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+      <h2 class="font-semibold mb-1">Selected Features</h2>
+      <ul id="selectedFeatures" class="text-sm list-disc list-inside"></ul>
+    </div>
+    <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+      <h2 class="font-semibold mb-1">Packages to Install</h2>
+      <ul id="packageList" class="text-sm list-disc list-inside"></ul>
+    </div>
+    <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+      <h2 class="font-semibold mb-1">Estimated Image Size</h2>
+      <p id="imageSize" class="text-sm">-</p>
+    </div>
+    <div class="bg-white rounded shadow p-2 flex-1 overflow-y-auto">
+      <h2 class="font-semibold mb-1">Dependency Summary</h2>
+      <ul id="dependencyList" class="text-sm list-disc list-inside"></ul>
+    </div>
+  </section>
+  <section class="w-1/2 p-2">
+    <div id="graph" class="w-full h-full border rounded"></div>
+  </section>
+</main>
+<footer class="h-10 bg-gray-200 text-xs flex items-center px-4">
+  Status: <span id="statusText">-</span>
+  <button id="exportBtn" class="ml-auto px-2 py-1 text-xs border rounded bg-white hover:bg-gray-100">Export</button>
+</footer>
 <script>
 const categories = [
   {
@@ -384,40 +487,37 @@ let selectedFeatures = new Set();
 let allExpanded = false;
 let allSelected = false;
 
-function getAllPackageDeps(pkg, visited = new Set()) {
-  if (visited.has(pkg)) return [];
+function getAllPackageDeps(pkg,visited=new Set()) {
+  if(visited.has(pkg))return[];
   visited.add(pkg);
-  let deps = [];
-  (packageDependencies[pkg] || []).forEach(dep => {
+  let deps=[];
+  (packageDependencies[pkg]||[]).forEach(dep=>{
     deps.push(dep);
-    deps = deps.concat(getAllPackageDeps(dep, visited));
+    deps=deps.concat(getAllPackageDeps(dep,visited));
   });
   return deps;
 }
 
 function getFeaturesByPackage(pkg) {
-  let result = [];
-  categories.forEach(cat => {
-    cat.features.forEach(f => {
-      if (f.requiredPackages.includes(pkg)) {
-        result.push(f.id);
-      }
+  let result=[];
+  categories.forEach(cat=>{
+    cat.features.forEach(f=>{
+      if(f.requiredPackages.includes(pkg)) result.push(f.id);
     });
   });
   return result;
 }
 
-function syncFeatureSelection(changedFeatureId, checked) {
-  if (checked) {
-    const feature = categories.flatMap(c => c.features).find(f => f.id === changedFeatureId);
-    if (!feature) return;
-
-    let packagesToCheck = new Set(feature.requiredPackages);
-    [...packagesToCheck].forEach(pkg => {
-      getAllPackageDeps(pkg).forEach(depPkg => packagesToCheck.add(depPkg));
+function syncFeatureSelection(changedFeatureId,checked) {
+  if(checked){
+    const feature=categories.flatMap(c=>c.features).find(f=>f.id===changedFeatureId);
+    if(!feature) return;
+    let packagesToCheck=new Set(feature.requiredPackages);
+    [...packagesToCheck].forEach(pkg=>{
+      getAllPackageDeps(pkg).forEach(depPkg=>packagesToCheck.add(depPkg));
     });
-    packagesToCheck.forEach(pkg => {
-      getFeaturesByPackage(pkg).forEach(fid => {
+    packagesToCheck.forEach(pkg=>{
+      getFeaturesByPackage(pkg).forEach(fid=>{
         selectedFeatures.add(fid);
       });
     });
@@ -428,122 +528,121 @@ function syncFeatureSelection(changedFeatureId, checked) {
   updateCheckboxes();
 }
 
-function updateCategoryCheckboxStates() {
-  categories.forEach(cat => {
-    const catCheckbox = document.querySelector(`input[type="checkbox"][data-cat='${cat.id}']`);
-    if (!catCheckbox) return;
-    const allFeatureIds = cat.features.map(f => f.id);
-    const checkedCount = allFeatureIds.filter(fid => selectedFeatures.has(fid)).length;
-    catCheckbox.checked = checkedCount === allFeatureIds.length;
-    catCheckbox.indeterminate = checkedCount > 0 && checkedCount < allFeatureIds.length;
+function updateCategoryCheckboxStates(){
+  categories.forEach(cat=>{
+    const catCheckbox=document.querySelector(`input[type="checkbox"][data-cat='${cat.id}']`);
+    if(!catCheckbox) return;
+    const allFeatureIds=cat.features.map(f=>f.id);
+    const checkedCount=allFeatureIds.filter(fid=>selectedFeatures.has(fid)).length;
+    catCheckbox.checked=checkedCount===allFeatureIds.length;
+    catCheckbox.indeterminate=checkedCount>0 && checkedCount<allFeatureIds.length;
   });
 }
 
-function updateCheckboxes() {
-  const container = document.getElementById('featureList');
-  container.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb => {
-    cb.checked = selectedFeatures.has(cb.dataset.feature);
+function updateCheckboxes(){
+  const container=document.getElementById('featureList');
+  container.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb=>{
+    cb.checked=selectedFeatures.has(cb.dataset.feature);
   });
   updateCategoryCheckboxStates();
 }
 
-function updateUI() {
-  const featureUl = document.getElementById('selectedFeatures');
-  const packageUl = document.getElementById('packageList');
-  const depUl = document.getElementById('dependencyList');
-  const statusText = document.getElementById('statusText');
+function updateUI(){
+  const featureUl=document.getElementById('selectedFeatures');
+  const packageUl=document.getElementById('packageList');
+  const depUl=document.getElementById('dependencyList');
+  const statusText=document.getElementById('statusText');
 
-  featureUl.innerHTML = '';
-  packageUl.innerHTML = '';
-  depUl.innerHTML = '';
+  featureUl.innerHTML='';
+  packageUl.innerHTML='';
+  depUl.innerHTML='';
 
-  const packages = new Set();
-  selectedFeatures.forEach(fid => {
-    const feature = categories.flatMap(c => c.features).find(f => f.id === fid);
-    if (feature) {
-      featureUl.innerHTML += `<li>${feature.name}</li>`;
-      feature.requiredPackages.forEach(pkg => packages.add(pkg));
+  const packages=new Set();
+  selectedFeatures.forEach(fid=>{
+    const feature=categories.flatMap(c=>c.features).find(f=>f.id===fid);
+    if(feature){
+      featureUl.innerHTML+=`<li>${feature.name}</li>`;
+      feature.requiredPackages.forEach(pkg=>packages.add(pkg));
     }
   });
 
-  let totalSize = 0;
-  packages.forEach(pkg => {
-    packageUl.innerHTML += `<li>${pkg}</li>`;
-    (packageDependencies[pkg] || []).forEach(dep => {
-      depUl.innerHTML += `<li>${pkg} → ${dep}</li>`;
+  let totalSize=0;
+  packages.forEach(pkg=>{
+    packageUl.innerHTML+=`<li>${pkg}</li>`;
+    (packageDependencies[pkg]||[]).forEach(dep=>{
+      depUl.innerHTML+=`<li>${pkg} → ${dep}</li>`;
     });
-    totalSize += 5;
+    totalSize+=5;
   });
 
-  document.getElementById('imageSize').innerText = `${totalSize} MB`;
-  const totalFeatures = categories.reduce((acc, c) => acc + c.features.length, 0);
-  const totalPackages = Object.keys(packageDependencies).length;
-  statusText.innerText = `${selectedFeatures.size} / ${totalFeatures} features selected | ${packages.size} / ${totalPackages} packages`;
+  document.getElementById('imageSize').innerText=`${totalSize} MB`;
+  const totalFeatures=categories.reduce((acc,c)=>acc+c.features.length,0);
+  const totalPackages=Object.keys(packageDependencies).length;
+  statusText.innerText=`${selectedFeatures.size} / ${totalFeatures} features selected | ${packages.size} / ${totalPackages} packages`;
 
   drawGraph(packages);
 }
 
-function drawGraph(pkgs) {
-  const nodes = [], edges = [];
-  const added = new Set();
-  pkgs.forEach(pkg => {
-    if (!added.has(pkg)) {
-      nodes.push({ id: pkg, label: pkg });
+function drawGraph(pkgs){
+  const nodes=[],edges=[];
+  const added=new Set();
+  pkgs.forEach(pkg=>{
+    if(!added.has(pkg)){
+      nodes.push({id:pkg,label:pkg});
       added.add(pkg);
     }
-    (packageDependencies[pkg] || []).forEach(dep => {
-      if (!added.has(dep)) {
-        nodes.push({ id: dep, label: dep });
+    (packageDependencies[pkg]||[]).forEach(dep=>{
+      if(!added.has(dep)){
+        nodes.push({id:dep,label:dep});
         added.add(dep);
       }
-      edges.push({ from: pkg, to: dep });
+      edges.push({from:pkg,to:dep});
     });
   });
-
-  const container = document.getElementById('graph');
-  const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
-  new vis.Network(container, data, {
-    nodes: { shape: 'box' },
-    physics: { enabled: true }
+  const container=document.getElementById('graph');
+  const data={nodes:new vis.DataSet(nodes),edges:new vis.DataSet(edges)};
+  new vis.Network(container,data,{
+    nodes:{shape:'box'},
+    physics:{enabled:true}
   });
 }
 
-function renderFeatureList() {
-  const container = document.getElementById('featureList');
-  container.innerHTML = '';
+function renderFeatureList(){
+  const container=document.getElementById('featureList');
+  container.innerHTML='';
 
-  categories.forEach(cat => {
-    const section = document.createElement('div');
-    section.className = 'mb-4';
+  categories.forEach(cat=>{
+    const section=document.createElement('div');
+    section.className='mb-4';
 
-    const header = document.createElement('div');
-    header.className = 'flex items-center justify-between cursor-pointer';
-    header.innerHTML = `<div class="flex items-center space-x-2">
+    const header=document.createElement('div');
+    header.className='flex items-center justify-between cursor-pointer';
+    header.innerHTML=`<div class="flex items-center space-x-2">
       <span class="toggle-icon">${allExpanded ? '▼' : '▶'}</span>
       <span>${cat.icon}</span>
       <span class="font-medium">${cat.name}</span>
     </div>
     <input type="checkbox" data-cat="${cat.id}" class="w-5 h-5" />`;
 
-    const body = document.createElement('div');
-    body.className = 'ml-6 mt-2 space-y-1';
-    body.dataset.catBody = cat.id;
-    body.style.display = allExpanded ? 'block' : 'none';
+    const body=document.createElement('div');
+    body.className='ml-6 mt-2 space-y-1';
+    body.dataset.catBody=cat.id;
+    body.style.display=allExpanded ? 'block' : 'none';
 
-    cat.features.forEach(f => {
-      const row = document.createElement('div');
-      row.className = 'flex items-center justify-between';
-      row.innerHTML = `<div class="flex items-center space-x-2">
+    cat.features.forEach(f=>{
+      const row=document.createElement('div');
+      row.className='flex items-center justify-between';
+      row.innerHTML=`<div class="flex items-center space-x-2">
         <span>${f.icon}</span><span>${f.name}</span>
       </div>
-      <input type="checkbox" data-feature="${f.id}" class="w-5 h-5" />`;
+      <input type="checkbox" data-feature="${f.id}" class="w-5 h-5"/>`;
       body.appendChild(row);
     });
 
-    header.querySelector('.toggle-icon').addEventListener('click', () => {
-      const current = body.style.display;
-      body.style.display = current === 'none' ? 'block' : 'none';
-      header.querySelector('.toggle-icon').textContent = body.style.display === 'none' ? '▶' : '▼';
+    header.querySelector('.toggle-icon').addEventListener('click',()=>{
+      const current=body.style.display;
+      body.style.display=current==='none' ? 'block' : 'none';
+      header.querySelector('.toggle-icon').textContent=body.style.display==='none' ? '▶' : '▼';
     });
 
     section.appendChild(header);
@@ -551,19 +650,19 @@ function renderFeatureList() {
     container.appendChild(section);
   });
 
-  container.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb => {
-    cb.addEventListener('change', e => {
-      const fid = e.target.dataset.feature;
-      syncFeatureSelection(fid, e.target.checked);
+  container.querySelectorAll('input[type="checkbox"][data-feature]').forEach(cb=>{
+    cb.addEventListener('change',e=>{
+      const fid=e.target.dataset.feature;
+      syncFeatureSelection(fid,e.target.checked);
     });
   });
 
-  container.querySelectorAll('input[type="checkbox"][data-cat]').forEach(cb => {
-    cb.addEventListener('change', e => {
-      const catId = e.target.dataset.cat;
-      const cat = categories.find(c => c.id === catId);
-      cat.features.forEach(f => {
-        if (e.target.checked) selectedFeatures.add(f.id);
+  container.querySelectorAll('input[type="checkbox"][data-cat]').forEach(cb=>{
+    cb.addEventListener('change',e=>{
+      const catId=e.target.dataset.cat;
+      const cat=categories.find(c=>c.id===catId);
+      cat.features.forEach(f=>{
+        if(e.target.checked) selectedFeatures.add(f.id);
         else selectedFeatures.delete(f.id);
       });
       updateCheckboxes();
@@ -572,70 +671,70 @@ function renderFeatureList() {
   });
 }
 
-document.getElementById('presetSelect').addEventListener('change', e => {
-  const preset = devicePresets.find(p => p.id === e.target.value);
-  if (!preset) return;
+document.getElementById('presetSelect').addEventListener('change',e=>{
+  const preset=devicePresets.find(p=>p.id===e.target.value);
+  if(!preset) return;
   selectedFeatures.clear();
-  preset.defaultFeatures.forEach(fid => selectedFeatures.add(fid));
+  preset.defaultFeatures.forEach(fid=>selectedFeatures.add(fid));
   updateCheckboxes();
   updateUI();
 });
 
-document.getElementById('toggleExpand').addEventListener('click', () => {
-  allExpanded = !allExpanded;
-  document.querySelectorAll('[data-cat-body]').forEach(div => {
-    div.style.display = allExpanded ? 'block' : 'none';
+document.getElementById('toggleExpand').addEventListener('click',()=>{
+  allExpanded=!allExpanded;
+  document.querySelectorAll('[data-cat-body]').forEach(div=>{
+    div.style.display=allExpanded ? 'block' : 'none';
   });
-  document.querySelectorAll('.toggle-icon').forEach(icon => {
-    icon.textContent = allExpanded ? '▼' : '▶';
+  document.querySelectorAll('.toggle-icon').forEach(icon=>{
+    icon.textContent=allExpanded ? '▼' : '▶';
   });
-  document.getElementById('toggleExpand').textContent = allExpanded ? '▲' : '▼';
+  document.getElementById('toggleExpand').textContent=allExpanded ? '▲' : '▼';
 });
 
-document.getElementById('toggleSelect').addEventListener('click', () => {
-  allSelected = !allSelected;
-  if (allSelected) {
-    categories.forEach(cat => {
-      cat.features.forEach(f => selectedFeatures.add(f.id));
+document.getElementById('toggleSelect').addEventListener('click',()=>{
+  allSelected=!allSelected;
+  if(allSelected){
+    categories.forEach(cat=>{
+      cat.features.forEach(f=>selectedFeatures.add(f.id));
     });
   } else {
     selectedFeatures.clear();
   }
   updateCheckboxes();
   updateUI();
-  document.getElementById('toggleSelect').textContent = allSelected ? '☑' : '☐';
+  document.getElementById('toggleSelect').textContent=allSelected ? '☑' : '☐';
 });
 
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const features = Array.from(selectedFeatures);
-  const packages = [];
-  features.forEach(fid => {
-    const feature = categories.flatMap(c => c.features).find(f => f.id === fid);
-    if (feature) {
-      feature.requiredPackages.forEach(pkg => {
-        if (!packages.includes(pkg)) packages.push(pkg);
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const features=Array.from(selectedFeatures);
+  const packages=[];
+  features.forEach(fid=>{
+    const feature=categories.flatMap(c=>c.features).find(f=>f.id===fid);
+    if(feature){
+      feature.requiredPackages.forEach(pkg=>{
+        if(!packages.includes(pkg)) packages.push(pkg);
       });
     }
   });
 
-  const deps = [];
-  packages.forEach(pkg => {
-    (packageDependencies[pkg] || []).forEach(dep => {
-      deps.push({ from: pkg, to: dep });
+  const deps=[];
+  packages.forEach(pkg=>{
+    (packageDependencies[pkg]||[]).forEach(dep=>{
+      deps.push({from:pkg,to:dep});
     });
   });
 
-  const exportData = {
+  const exportData={
     selectedFeatures: features,
     requiredPackages: packages,
     dependencies: deps
   };
 
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'webos_selection.json';
+  const blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='webos_selection.json';
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -645,4 +744,3 @@ updateUI();
 </script>
 </body>
 </html>
-``
