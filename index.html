@@ -269,7 +269,7 @@ const categories = [
     id: 'ui',
     name: 'UI Frameworks',
     icon: '🎨',
-    features: [
+    features: [ 
       { id: 'launcher', name: 'Launcher', icon: '🏠', requiredPackages: ['pkg-launcher'] },
       { id: 'flutter', name: 'Flutter Support', icon: '🦋', requiredPackages: ['pkg-flutter', 'pkg-skia', 'pkg-dart-runtime'] },
       { id: 'enact', name: 'Enact Framework', icon: '⚛️', requiredPackages: ['pkg-enact', 'pkg-react', 'pkg-nodejs'] },
@@ -483,31 +483,38 @@ const devicePresetsRaw = [
     id: 'smart-tv',
     name: 'Smart TV',
     defaultFeatures: [
-      /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
-      'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
-      /* 미디어 */
+      // --- Media & Playback ---
       'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
       'camera', 'picture-quality', 'audio-quality',
-      /* 네트워크 */
+ 
+      // --- Connectivity & Network ---
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
-      /* 앱 */
+ 
+      // --- Apps & Services ---
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
-      /* 디스플레이/오디오 */
+ 
+      // --- Display & Audio ---
       'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
-      /* 시스템 앱 */
-      'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
-      /* AI */
+ 
+      // --- System Apps ---
+      'home-launcher', 'settings-app', 'file-manager', 'package-manager',
+      'notification-manager', 'system-ui', 'input-method', 'power-manager',
+ 
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
+      // --- AI & Voice ---
       'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
-      /* 클라우드 */
+ 
+      // --- Cloud & Services ---
       'sdp', 'thinq', 'nsu',
-      /* 보안 */
+ 
+      // --- Security ---
       'secure-boot', 'firewall', 'knox', 'antivirus',
-      /* 개발 도구 */
+ 
+      // --- Developer Tools ---
       'debugger', 'profiler', 'ci-cd',
-      /* 방송 */
+ 
+      // --- Broadcasting ---
       'dvb-t2', 'atsc', 'isdb-t', 'media-broadcast-app', 'epg'
     ]
   },
@@ -523,8 +530,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -553,8 +560,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -583,8 +590,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -615,8 +622,9 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+    
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -644,8 +652,8 @@ const devicePresetsRaw = [
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 디스플레이/오디오 */
       'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
       /* 네트워크 */
@@ -669,9 +677,6 @@ const devicePresetsRaw = [
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 네트워크 */
       'wifi', 'bluetooth', 'nfc', 'zigbee', 'blemesh',
-
-      /* 앱 */
-      'home-launcher', 'settings-app', 'package-manager', 'notification-manager', 'system-ui',
       /* AI */
       'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
       /* 클라우드 */
@@ -692,8 +697,9 @@ const devicePresetsRaw = [
       /* 미디어 */
     'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
       'camera',    
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+   
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 네트워크 */
       'wifi',
      /* 디스플레이/오디오 */
@@ -719,8 +725,9 @@ const devicePresetsRaw = [
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support',
-      // UI Frameworks
-      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
+     
+      // --- UI Frameworks ---
+      'launcher', 'flutter', 'enact', 'lvgl', 'theme-support', 'dark-mode', 'accessibility', 
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn',
       /* 앱 */
