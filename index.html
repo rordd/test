@@ -6,7 +6,7 @@
 <title>webOS Micro</title>
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-<style> /* webOS Micro 5.0 */
+<style> /* webOS Micro 4.0 */
   html, body {
     height: 100%;
     margin: 0;
@@ -214,7 +214,7 @@ const categories = [
     name: 'Core System',
     icon: '🧩',
     features: [
-      { id: 'kernel', name: 'Kernel & OS', icon: '🖥️', requiredPackages: ['pkg-kernel'] },
+      { id: 'kernel', name: 'Kernel & OS', icon: '⚙️', requiredPackages: ['pkg-kernel'] },
       { id: 'process-scheduler', name: 'Process Scheduler', icon: '⚙️', requiredPackages: ['pkg-process'] },
       { id: 'memory-management', name: 'Memory Management', icon: '🧠', requiredPackages: ['pkg-memory'] },
       { id: 'power-management', name: 'Power Management', icon: '🔋', requiredPackages: ['pkg-power'] },
@@ -253,6 +253,48 @@ const categories = [
     ]
   },
   {
+    id: 'display-audio',
+    name: 'Display & Audio',
+    icon: '🖥️',
+    features: [
+      { id: 'panel-control', name: 'Panel Control', icon: '🖥️', requiredPackages: ['pkg-panel'] },
+      { id: 'hdmi-output', name: 'HDMI Output', icon: '📺', requiredPackages: ['pkg-hdmi'] },
+      { id: 'hdr-support', name: 'HDR Support', icon: '🌈', requiredPackages: ['pkg-hdr'] },
+      { id: 'picture-quality', name: 'Picture Quality', icon: '🖼️', requiredPackages: ['pkg-video-enhance'] },
+      { id: 'audio-quality', name: 'Audio Quality', icon: '🔊', requiredPackages: ['pkg-audio-enhance'] },
+      { id: 'equalizer', name: 'Equalizer', icon: '🎚️', requiredPackages: ['pkg-equalizer'] }
+    ]
+  },
+  {
+    id: 'ui',
+    name: 'UI Frameworks',
+    icon: '🎨',
+    features: [
+      { id: 'launcher', name: 'Launcher', icon: '🏠', requiredPackages: ['pkg-launcher'] },
+      { id: 'flutter', name: 'Flutter Support', icon: '🦋', requiredPackages: ['pkg-flutter', 'pkg-skia', 'pkg-dart-runtime'] },
+      { id: 'enact', name: 'Enact Framework', icon: '⚛️', requiredPackages: ['pkg-enact', 'pkg-react', 'pkg-nodejs'] },
+      { id: 'lvgl', name: 'LVGL UI Engine', icon: '🎨', requiredPackages: ['pkg-lvgl'] },
+      { id: 'theme-support', name: 'Theme Support', icon: '🎭', requiredPackages: ['pkg-theme'] },
+      { id: 'dark-mode', name: 'Dark Mode', icon: '🌙', requiredPackages: ['pkg-darkmode'] },
+      { id: 'accessibility', name: 'Accessibility', icon: '♿', requiredPackages: ['pkg-accessibility'] }
+    ]
+  },
+  {
+    id: 'system-apps',
+    name: 'System Apps',
+    icon: '🛠️',
+    features: [
+      { id: 'home-launcher', name: 'Home Launcher', icon: '🏠', requiredPackages: ['pkg-home-launcher'] },
+      { id: 'settings-app', name: 'Settings', icon: '⚙️', requiredPackages: ['pkg-settings'] },
+      { id: 'file-manager', name: 'File Manager', icon: '📁', requiredPackages: ['pkg-file-manager'] },
+      { id: 'package-manager', name: 'Package Manager', icon: '📦', requiredPackages: ['pkg-package-manager'] },
+      { id: 'notification-manager', name: 'Notification Manager', icon: '🔔', requiredPackages: ['pkg-notification'] },
+      { id: 'system-ui', name: 'System UI', icon: '🖥️', requiredPackages: ['pkg-system-ui'] },
+      { id: 'input-method', name: 'Input Method Editor (IME)', icon: '⌨️', requiredPackages: ['pkg-ime'] },
+      { id: 'power-manager', name: 'Power Manager', icon: '🔋', requiredPackages: ['pkg-power-manager'] }
+    ]
+  },
+  {
     id: 'apps',
     name: 'Apps & Services',
     icon: '📱',
@@ -275,34 +317,6 @@ const categories = [
       { id: 'nfc', name: 'NFC Support', icon: '📳', requiredPackages: ['pkg-nfc'] },
       { id: 'vpn', name: 'VPN Client', icon: '🕵️‍♂️', requiredPackages: ['pkg-vpn'] },
       { id: 'smart-home-protocols', name: 'Smart Home Protocols (Zigbee, BLE Mesh)', icon: '🏠', requiredPackages: ['pkg-zigbee', 'pkg-blemesh'] }
-    ]
-  },
-  {
-    id: 'display-audio',
-    name: 'Display & Audio',
-    icon: '🖥️🎵',
-    features: [
-      { id: 'panel-control', name: 'Panel Control', icon: '🖥️', requiredPackages: ['pkg-panel'] },
-      { id: 'hdmi-output', name: 'HDMI Output', icon: '📺', requiredPackages: ['pkg-hdmi'] },
-      { id: 'hdr-support', name: 'HDR Support', icon: '🌈', requiredPackages: ['pkg-hdr'] },
-      { id: 'picture-quality', name: 'Picture Quality', icon: '🖼️', requiredPackages: ['pkg-video-enhance'] },
-      { id: 'audio-quality', name: 'Audio Quality', icon: '🔊', requiredPackages: ['pkg-audio-enhance'] },
-      { id: 'equalizer', name: 'Equalizer', icon: '🎚️', requiredPackages: ['pkg-equalizer'] }
-    ]
-  },
-  {
-    id: 'system-apps',
-    name: 'System Apps',
-    icon: '🛠️',
-    features: [
-      { id: 'home-launcher', name: 'Home Launcher', icon: '🏠', requiredPackages: ['pkg-home-launcher'] },
-      { id: 'settings-app', name: 'Settings', icon: '⚙️', requiredPackages: ['pkg-settings'] },
-      { id: 'file-manager', name: 'File Manager', icon: '📁', requiredPackages: ['pkg-file-manager'] },
-      { id: 'package-manager', name: 'Package Manager', icon: '📦', requiredPackages: ['pkg-package-manager'] },
-      { id: 'notification-manager', name: 'Notification Manager', icon: '🔔', requiredPackages: ['pkg-notification'] },
-      { id: 'system-ui', name: 'System UI', icon: '🖥️', requiredPackages: ['pkg-system-ui'] },
-      { id: 'input-method', name: 'Input Method Editor (IME)', icon: '⌨️', requiredPackages: ['pkg-ime'] },
-      { id: 'power-manager', name: 'Power Manager', icon: '🔋', requiredPackages: ['pkg-power-manager'] }
     ]
   },
   {
@@ -350,7 +364,7 @@ const categories = [
   {
     id: 'soc',
     name: 'SoC Features',
-    icon: '💻',
+    icon: '🟫',
     features: [
       { id: 'O22', name: 'O22', icon: '💠', requiredPackages: ['pkg-O22'] },
       { id: 'O24', name: 'O24', icon: '💠', requiredPackages: ['pkg-O24'] },
@@ -401,7 +415,7 @@ const packageDependencies = {
   'pkg-waf': ['pkg-network'],
   'pkg-firewall': ['pkg-network', 'pkg-waf'],
 
-  // Apps
+  // Apps with UI core dependency
   'pkg-netflix': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-secure', 'pkg-audio', 'pkg-ui-core'],
   'pkg-youtube': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-audio', 'pkg-ui-core'],
   'pkg-amazon-prime': ['pkg-network', 'pkg-video', 'pkg-drm', 'pkg-audio', 'pkg-ui-core'],
@@ -415,14 +429,23 @@ const packageDependencies = {
   'pkg-equalizer': ['pkg-audio', 'pkg-ui-core'],
 
   // System Apps
-  'pkg-home-launcher': ['pkg-ui-core', 'pkg-network'],
-  'pkg-settings': ['pkg-ui-core'],
-  'pkg-file-manager': ['pkg-fs', 'pkg-ui-core'],
-  'pkg-package-manager': ['pkg-ui-core', 'pkg-network'],
-  'pkg-notification': ['pkg-ui-core'],
-  'pkg-system-ui': ['pkg-ui-core'],
-  'pkg-ime': ['pkg-ui-core'],
-  'pkg-power-manager': ['pkg-power', 'pkg-ui-core'],
+  'pkg-home-launcher': ['pkg-flutter', 'pkg-ui-core'], // 런처는 Flutter 기반
+  'pkg-settings': ['pkg-enact', 'pkg-ui-core'],        // 셋팅 앱은 Enact 기반
+  'pkg-file-manager': ['pkg-flutter', 'pkg-ui-core'], // 파일 매니저는 Flutter 기반
+  'pkg-package-manager': ['pkg-enact', 'pkg-ui-core', 'pkg-network'], // 패키지 매니저는 Enact + 네트워크
+  'pkg-notification': ['pkg-enact', 'pkg-ui-core'],    // 알림 앱 Enact 기반
+  'pkg-system-ui': ['pkg-flutter', 'pkg-ui-core'],     // 시스템 UI Flutter 기반
+  'pkg-ime': ['pkg-enact', 'pkg-ui-core'],             // 입력기 Enact 기반
+  'pkg-power-manager': ['pkg-flutter', 'pkg-power', 'pkg-ui-core'], // 전원관리 Flutter + 파워
+
+  // UI Frameworks (Flutter, Enact 등)
+  'pkg-flutter': ['pkg-skia', 'pkg-dart-runtime', 'pkg-ui-core'],
+  'pkg-enact': ['pkg-react', 'pkg-nodejs', 'pkg-ui-core'],
+  'pkg-launcher': ['pkg-ui-core'],
+  'pkg-lvgl': ['pkg-ui-core'],
+  'pkg-theme': ['pkg-ui-core'],
+  'pkg-darkmode': ['pkg-ui-core'],
+  'pkg-accessibility': ['pkg-ui-core'],
 
   // AI & Voice
   'pkg-ai': ['pkg-ml', 'pkg-gpu-accel', 'pkg-ui-core'],
@@ -454,6 +477,7 @@ const packageDependencies = {
   'pkg-epg': ['pkg-network', 'pkg-ui-core']
 };
 
+
 const devicePresetsRaw = [
   {
     id: 'smart-tv',
@@ -475,6 +499,8 @@ const devicePresetsRaw = [
       'home-launcher', 'settings-app', 'file-manager', 'package-manager', 'notification-manager', 'system-ui', 'input-method', 'power-manager',
       /* AI */
       'voice-assistant', 'voice-recognition', 'nlp', 'ai-framework',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 클라우드 */
       'sdp', 'thinq', 'nsu',
       /* 보안 */
@@ -497,6 +523,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -525,6 +553,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -553,6 +583,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -583,6 +615,8 @@ const devicePresetsRaw = [
       'camera', 'picture-quality', 'audio-quality',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn', 'smart-home-protocols',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 앱 */
       'netflix', 'youtube', 'amazon-prime', 'hulu', 'web-browser',
       /* 디스플레이/오디오 */
@@ -610,6 +644,8 @@ const devicePresetsRaw = [
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 디스플레이/오디오 */
       'panel-control', 'hdmi-output', 'hdr-support', 'equalizer',
       /* 네트워크 */
@@ -656,6 +692,8 @@ const devicePresetsRaw = [
       /* 미디어 */
     'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
       'camera',    
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 네트워크 */
       'wifi',
      /* 디스플레이/오디오 */
@@ -681,6 +719,8 @@ const devicePresetsRaw = [
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support',
+      // UI Frameworks
+      'pkg-flutter', 'pkg-enact', 'pkg-lvgl', 'pkg-theme', 'pkg-darkmode', 'pkg-accessibility',
       /* 네트워크 */
       'wifi', 'ethernet', 'bluetooth', 'vpn',
       /* 앱 */
