@@ -6,7 +6,7 @@
 <title>webOS Micro</title>
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-<style> /* webOS Micro 4.0 */
+<style> /* webOS Micro 7.0 */
   html, body {
     height: 100%;
     margin: 0;
@@ -169,9 +169,9 @@
 <main>
   <section class="w-1/4 border-r flex flex-col">
     <div class="p-2 border-b">
-      <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device</label>
+      <label for="presetSelect" class="block text-base font-semibold mb-1">Select Device Preset</label>
       <select id="presetSelect" class="w-full apple-input mb-3">
-  <option value="">-- Select Device --</option>
+  <option value="">-- Select Device Preset --</option>
 </select>
       <div class="text-base font-semibold mb-1">Select Features</div>
       <div class="flex justify-end space-x-2">
@@ -215,7 +215,7 @@ const categories = [
     icon: '🧩',
     features: [
       { id: 'kernel', name: 'Kernel & OS', icon: '⚙️', requiredPackages: ['pkg-kernel'] },
-      { id: 'process-scheduler', name: 'Process Scheduler', icon: '⚙️', requiredPackages: ['pkg-process'] },
+      { id: 'window-management', name: 'Window Management', icon: '🧱', requiredPackages: ['pkg-wayland'] },
       { id: 'memory-management', name: 'Memory Management', icon: '🧠', requiredPackages: ['pkg-memory'] },
       { id: 'power-management', name: 'Power Management', icon: '🔋', requiredPackages: ['pkg-power'] },
       { id: 'device-driver-framework', name: 'Device Driver Framework', icon: '🔌', requiredPackages: ['pkg-drivers'] },
@@ -379,12 +379,13 @@ const categories = [
 const packageDependencies = {
   // Core system
   'pkg-kernel': [],
-  'pkg-process': ['pkg-kernel'],
+  'pkg-opengl': [],
+  'pkg-wayland': ['pkg-opengl'],
   'pkg-memory': ['pkg-kernel'],
   'pkg-power': ['pkg-battery', 'pkg-kernel'],
   'pkg-battery': [],
   'pkg-drivers': ['pkg-kernel'],
-  'pkg-ipc': ['pkg-kernel', 'pkg-process'],
+  'pkg-ipc': ['pkg-kernel'],
   'pkg-logging': ['pkg-kernel'],
   'pkg-security': ['pkg-kernel'],
   'pkg-secureboot': ['pkg-kernel', 'pkg-security', 'pkg-drivers'],
@@ -439,10 +440,10 @@ const packageDependencies = {
   'pkg-power-manager': ['pkg-flutter', 'pkg-power', 'pkg-ui-core'], // 전원관리 Flutter + 파워
 
   // UI Frameworks (Flutter, Enact 등)
-  'pkg-flutter': ['pkg-skia', 'pkg-dart-runtime', 'pkg-ui-core'],
-  'pkg-enact': ['pkg-react', 'pkg-nodejs', 'pkg-ui-core'],
+  'pkg-flutter': ['pkg-wayland','pkg-skia', 'pkg-dart-runtime', 'pkg-ui-core'],
+  'pkg-enact': ['pkg-wayland','pkg-react', 'pkg-nodejs', 'pkg-ui-core'],
   'pkg-launcher': ['pkg-ui-core'],
-  'pkg-lvgl': ['pkg-ui-core'],
+  'pkg-lvgl': ['pkg-wayland','pkg-ui-core'],
   'pkg-theme': ['pkg-ui-core'],
   'pkg-darkmode': ['pkg-ui-core'],
   'pkg-accessibility': ['pkg-ui-core'],
@@ -523,7 +524,7 @@ const devicePresetsRaw = [
     name: 'Smart Monitor',
     defaultFeatures: [
      /* 코어 */
-     'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+     'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
@@ -549,11 +550,11 @@ const devicePresetsRaw = [
     ]
   },
   {
-    id: 'standby-me',
-    name: 'Standby.me',
+    id: 'stanyme',
+    name: 'StanbyMe',
     defaultFeatures: [
       /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
@@ -583,7 +584,7 @@ const devicePresetsRaw = [
     name: 'Projector',
     defaultFeatures: [
   /* 코어 */
-  'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+  'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
@@ -615,7 +616,7 @@ const devicePresetsRaw = [
     name: 'Hotel TV',
     defaultFeatures: [
   /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
@@ -648,7 +649,7 @@ const devicePresetsRaw = [
     name: 'Digital Signage',
     defaultFeatures: [
       /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback',
@@ -673,7 +674,7 @@ const devicePresetsRaw = [
     name: 'Smart Hub',
     defaultFeatures: [
       /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel','memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 네트워크 */
       'wifi', 'bluetooth', 'nfc', 'zigbee', 'blemesh',
@@ -692,7 +693,7 @@ const devicePresetsRaw = [
     name: 'Smart Refrigerator',
     defaultFeatures: [
       /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
     'video-playback', 'audio-playback', 'subtitle-support', 'drm-support', 'media-codecs',
@@ -717,11 +718,11 @@ const devicePresetsRaw = [
     ]
   },
   {
-    id: 'auto-content',
-    name: 'Automotive Content',
+    id: 'auto-contents',
+    name: 'Automotive Contents',
     defaultFeatures: [
       /* 코어 */
-      'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+      'kernel', 'window-management', 'memory-management', 'power-management', 'device-driver-framework',
       'interprocess-communication', 'system-logging', 'security-framework', 'system-update',
       /* 미디어 */
       'video-playback', 'audio-playback', 'subtitle-support',
@@ -748,7 +749,7 @@ const devicePresetsRaw = [
 
 // 기본 코어 기능 자동 포함
 const coreFeatures = [
-  'kernel', 'process-scheduler', 'memory-management', 'power-management', 'device-driver-framework',
+  'kernel', 'memory-management', 'power-management', 'device-driver-framework',
   'interprocess-communication', 'system-logging', 'security-framework', 'system-update'
 ];
 
